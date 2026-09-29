@@ -22,6 +22,7 @@ export const site = {
     postalCode: "03113",
     country: "UA",
     place: "Головний кампус Київської школи економіки",
+    mapUrl: "https://maps.google.com/?cid=2473816535883408136",
   },
   provider: {
     name: "Київська школа економіки",
@@ -37,6 +38,7 @@ export const navLinks = [
   { href: "#audience", text: "Для кого" },
   { href: "#teachers", text: "Викладачі" },
   { href: "#interview", text: "Інтервʼю" },
+  { href: "#faq", text: "Запитання" },
 ] as const;
 
 export const knowledgeTopics = [

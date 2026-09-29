@@ -39,7 +39,7 @@ export default function NamedAfter() {
           data-reveal="up"
           className={`${columnPadding} pb-12 md:pb-16 lg:col-start-1 lg:row-start-3 lg:pb-20`}
         >
-          <p className="max-w-[800px] text-justify type-lead">
+          <p className="max-w-[800px] type-lead">
             {namedAfter.text} Більше про його життя та захоплення читайте на{" "}
             <a
               href={namedAfter.link}

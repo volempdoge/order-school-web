@@ -10,10 +10,62 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { site } from "@/content/site";
 import * as fbq from "@/lib/tracker";
 
 // Bump when the consent wording or the privacy policy changes
 const PRIVACY_POLICY_VERSION = "2026-09-29";
+
+const defaultValues = {
+  email: "",
+  role: "",
+  fullName: "",
+  school: "",
+  grade: "",
+  module: "",
+  telegram: "",
+  phone: "",
+  howDidYouHear: "",
+  consent: false,
+  guardianConsent: false,
+};
+type FormValues = typeof defaultValues;
+
+// An unsent draft survives a reload or a failed submit. sessionStorage: it stays in this tab and is
+// gone once the tab is closed. Consents are never restored — they have to be given again.
+const DRAFT_KEY = "onboarding-draft";
+
+function readDraft(): Partial<FormValues> | null {
+  try {
+    const raw = sessionStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as Partial<FormValues>) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveDraft(values: FormValues) {
+  try {
+    const { consent: _consent, guardianConsent: _guardianConsent, ...draft } = values;
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  } catch {
+    // Storage is unavailable (private mode, blocked site data): the form still works without a draft
+  }
+}
+
+function clearDraft() {
+  try {
+    sessionStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // See saveDraft
+  }
+}
+
+// Every option has a value, so an empty one only comes from Radix Select's hidden native <select>:
+// when the value is set before its options register (a restored draft), it reports "" back.
+const keepOption = (onChange: (value: string) => void) => (value: string) => {
+  if (value) onChange(value);
+};
 
 function ConsentCheckbox({
   id,
@@ -60,23 +112,13 @@ function ConsentCheckbox({
 export default function OnboardingForm() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState(false);
 
   const form = useForm({
-    defaultValues: {
-      email: "",
-      role: "",
-      fullName: "",
-      school: "",
-      grade: "",
-      module: "",
-      telegram: "",
-      phone: "",
-      howDidYouHear: "",
-      consent: false,
-      guardianConsent: false,
-    },
+    defaultValues,
     onSubmit: async ({ value }) => {
       setIsSubmitting(true);
+      setSubmitError(false);
 
       try {
         const SCRIPT_URL =
@@ -103,14 +145,23 @@ export default function OnboardingForm() {
         setShowSuccess(true);
 
         form.reset();
+        clearDraft();
       } catch (error) {
+        // The entered values stay in the form (and in the draft), so a retry is one click
         console.error("Error submitting form:", error);
-        alert("Під час надсилання форми сталася помилка. Будь ласка, спробуйте ще раз.");
+        setSubmitError(true);
       } finally {
         setIsSubmitting(false);
       }
     },
   });
+
+  // Restored after mount, not in defaultValues: the server HTML has no access to sessionStorage
+  React.useEffect(() => {
+    const draft = readDraft();
+    if (draft) form.reset({ ...defaultValues, ...draft }, { keepDefaultValues: true });
+    return form.store.subscribe(() => saveDraft(form.state.values));
+  }, [form]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -121,7 +172,7 @@ export default function OnboardingForm() {
   return (
     <>
       <section className="flex min-h-screen items-center justify-center p-4 pb-16">
-        <div className="mt-24 w-full max-w-2xl rounded-lg bg-card p-6 shadow-xl md:mt-48 md:p-12">
+        <div className="mt-24 w-full max-w-2xl rounded-lg bg-card p-6 shadow-xl md:mt-32 md:p-12">
           <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             <FieldSet>
               <FieldGroup>
@@ -185,15 +236,15 @@ export default function OnboardingForm() {
                           onValueChange={field.handleChange}
                           className="space-y-2"
                         >
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-3">
                             <RadioGroupItem value="parent" id="parent" />
-                            <Label htmlFor="parent" className="cursor-pointer">
+                            <Label htmlFor="parent" className="cursor-pointer py-1 text-base">
                               Батько/Мати
                             </Label>
                           </div>
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-3">
                             <RadioGroupItem value="student" id="student" />
-                            <Label htmlFor="student" className="cursor-pointer">
+                            <Label htmlFor="student" className="cursor-pointer py-1 text-base">
                               Школяр
                             </Label>
                           </div>
@@ -271,8 +322,8 @@ export default function OnboardingForm() {
                         <FieldLabel htmlFor={field.name}>
                           Клас <span className="text-primary-strong">*</span>
                         </FieldLabel>
-                        <Select value={field.state.value} onValueChange={field.handleChange}>
-                          <SelectTrigger id={field.name} className="bg-white">
+                        <Select value={field.state.value} onValueChange={keepOption(field.handleChange)}>
+                          <SelectTrigger id={field.name} className="w-full bg-white px-4 text-base">
                             <SelectValue placeholder="Оберіть клас" />
                           </SelectTrigger>
                           <SelectContent>
@@ -300,8 +351,8 @@ export default function OnboardingForm() {
                         <FieldLabel htmlFor={field.name}>
                           Який модуль вас цікавить? <span className="text-primary-strong">*</span>
                         </FieldLabel>
-                        <Select value={field.state.value} onValueChange={field.handleChange}>
-                          <SelectTrigger id={field.name} className="bg-white">
+                        <Select value={field.state.value} onValueChange={keepOption(field.handleChange)}>
+                          <SelectTrigger id={field.name} className="w-full bg-white px-4 text-base">
                             <SelectValue placeholder="Оберіть модуль" />
                           </SelectTrigger>
                           <SelectContent>
@@ -484,7 +535,36 @@ export default function OnboardingForm() {
                   </form.Subscribe>
                 </div>
 
-                <div className="mt-8">
+                {submitError && (
+                  <div
+                    role="alert"
+                    className="mt-8 rounded-lg border-2 border-primary-strong bg-background px-5 py-4 type-small"
+                  >
+                    <p className="font-bold text-primary-strong">Не вдалося надіслати форму</p>
+                    <p className="mt-1">
+                      Перевірте підключення до інтернету й натисніть «Надіслати» ще раз — усе, що ви ввели,
+                      збережено. Якщо не вийде, напишіть нам у{" "}
+                      <a
+                        href={site.telegram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold text-primary-strong underline underline-offset-2"
+                      >
+                        Telegram
+                      </a>{" "}
+                      або на{" "}
+                      <a
+                        href={`mailto:${site.email}`}
+                        className="font-bold text-primary-strong underline underline-offset-2"
+                      >
+                        {site.email}
+                      </a>
+                      .
+                    </p>
+                  </div>
+                )}
+
+                <div className={submitError ? "mt-4" : "mt-8"}>
                   <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? "Надсилання…" : "Надіслати форму"}
                   </Button>

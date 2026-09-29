@@ -1,6 +1,5 @@
 "use client";
 
-import { Instagram, Mail, Send } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,7 +15,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { navLinks, site } from "@/content/site";
 
-import FooterIcon from "./sections/FooterIcon";
+import SocialLinks from "./SocialLinks";
 import { Button } from "./ui/button";
 
 const MENU_ID = "mobile-menu";
@@ -110,8 +109,10 @@ export function Navigation() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between gap-2 px-4 py-4 transition-all duration-300 md:h-36 md:px-8 md:py-16 lg:gap-4 xl:gap-6 xl:px-20 ${
-          solid ? "rounded-b-md bg-background text-foreground shadow-md" : "bg-transparent text-white"
+        className={`fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between gap-2 px-4 transition-all duration-300 md:px-8 lg:gap-4 xl:gap-6 xl:px-12 2xl:px-20 ${
+          solid
+            ? "rounded-b-md bg-background text-foreground shadow-md md:h-24"
+            : "bg-transparent text-white md:h-36"
         }`}
       >
         <Link href="/" aria-label={`${site.name} — на головну`} className="shrink-0">
@@ -119,7 +120,7 @@ export function Navigation() {
             src={solid ? logo_mobile : logo}
             alt={site.name}
             priority
-            className="h-7 w-auto cursor-pointer md:h-12 xl:h-10 2xl:h-12"
+            className="h-7 w-auto cursor-pointer md:h-10 2xl:h-12"
           />
         </Link>
 
@@ -169,15 +170,16 @@ export function Navigation() {
           className="fixed inset-0 z-[60] animate-in overscroll-contain bg-primary duration-300 fade-in xl:hidden"
         >
           <div className="flex h-dvh flex-col overflow-y-auto">
-            <div className="flex flex-shrink-0 items-center justify-between border-b border-white/30 px-6 py-4">
+            {/* Same height and paddings as the header, so the logo and the button stay in place */}
+            <div className="flex h-20 flex-shrink-0 items-center justify-between border-b border-white/30 px-4 md:h-24 md:px-8">
               <Link href="/" onClick={closeMenu}>
-                <Image src={logo} alt={site.name} className="h-8 w-auto" />
+                <Image src={logo} alt={site.name} className="h-7 w-auto md:h-10" />
               </Link>
               <button
                 type="button"
                 data-menu-close
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md focus-visible:ring-[3px] focus-visible:ring-white/70 focus-visible:outline-none"
+                className="-mr-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md focus-visible:ring-[3px] focus-visible:ring-white/70 focus-visible:outline-none"
                 aria-label="Закрити меню"
               >
                 <svg
@@ -223,17 +225,7 @@ export function Navigation() {
                 <p className="mb-4 text-center text-xl font-bold tracking-wide text-white uppercase">
                   Наші соцмережі
                 </p>
-                <div className="flex justify-center gap-4 pb-6 text-white">
-                  <a href={`mailto:${site.email}`} aria-label="Email">
-                    <FooterIcon icon={Mail} />
-                  </a>
-                  <a href={site.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                    <FooterIcon icon={Instagram} />
-                  </a>
-                  <a href={site.telegram} target="_blank" rel="noopener noreferrer" aria-label="Telegram">
-                    <FooterIcon icon={Send} />
-                  </a>
-                </div>
+                <SocialLinks className="flex justify-center gap-4 pb-6 text-white" />
               </div>
             </div>
           </div>

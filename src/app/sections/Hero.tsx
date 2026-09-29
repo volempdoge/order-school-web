@@ -29,8 +29,8 @@ export default function Hero({ id }: { id?: string }) {
         />
       </div>
 
-      <div className="relative z-10 flex min-h-screen items-end justify-start md:items-center">
-        <div className="w-full px-6 pb-16 md:mt-96 md:ml-16 md:w-auto md:px-0 md:pb-0">
+      <div className="relative z-10 flex min-h-screen items-end justify-start">
+        <div className="w-full px-6 pb-16 md:w-auto md:px-16 md:pb-24 lg:pb-32">
           <h1 className="max-w-[333px] type-display text-white md:max-w-5xl">
             Станьте частиною Гуртка <span className="text-primary">політичних студій</span> від KSE <br />
             Відкривайте світ суспільних змін

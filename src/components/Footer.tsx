@@ -28,25 +28,12 @@ export default function Footer() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link href="/#faq" className="underline-offset-4 hover:text-white hover:underline">
-                Поширені запитання
-              </Link>
-            </li>
           </ul>
         </nav>
 
         <div>
           <p className="mb-4 type-small font-bold tracking-wider uppercase">Контакти</p>
           <ul className="space-y-2 type-small text-white/80">
-            <li>
-              <a
-                href={`mailto:${site.email}`}
-                className="underline-offset-4 hover:text-white hover:underline"
-              >
-                {site.email}
-              </a>
-            </li>
             <li>
               <a
                 href={site.telegram}
@@ -65,6 +52,14 @@ export default function Footer() {
                 className="underline-offset-4 hover:text-white hover:underline"
               >
                 Instagram
+              </a>
+            </li>
+            <li>
+              <a
+                href={`mailto:${site.email}`}
+                className="underline-offset-4 hover:text-white hover:underline"
+              >
+                {site.email}
               </a>
             </li>
           </ul>

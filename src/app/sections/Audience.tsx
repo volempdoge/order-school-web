@@ -25,8 +25,8 @@ function AudienceItem({ text }: { text: string }) {
 
 export default function Audience({ id }: { id?: string }) {
   return (
-    <section id={id} className="relative min-h-screen w-full py-10 md:py-20">
-      <div className="relative min-h-screen overflow-hidden md:mx-auto md:grid md:min-h-0 md:max-w-7xl md:grid-cols-2 md:items-center md:gap-12 md:overflow-visible md:px-8">
+    <section id={id} className="relative w-full py-10 md:py-20">
+      <div className="relative overflow-hidden md:mx-auto md:grid md:max-w-7xl md:grid-cols-2 md:items-center md:gap-12 md:overflow-visible md:px-8">
         <div data-reveal="up" className="relative z-10 px-6 py-8 md:p-0">
           <SectionHeading align="left">
             Для кого створений <br className="hidden md:inline" />

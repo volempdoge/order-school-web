@@ -35,13 +35,13 @@ export default function Timeline({
   const openId = modules.find((m) => m.status === "триває" || m.status === "незабаром початок")?.id;
 
   return (
-    <section id={id} className="relative min-h-screen w-full py-12 md:py-20">
+    <section id={id} className="relative w-full py-12 md:py-20">
       <div data-reveal="up" className="mx-auto max-w-6xl px-6 text-center md:px-4">
         <SectionHeading>Навчальні модулі</SectionHeading>
         <p className="mt-8 type-lead">Ви можете обирати будь-який модуль або повну річну програму</p>
       </div>
 
-      <div className="mx-auto my-12 max-w-7xl px-4 sm:px-0 md:my-16">
+      <div className="mx-auto my-12 max-w-7xl px-6 md:my-16 md:px-8">
         {unavailable && (
           <div
             role="status"

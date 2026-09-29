@@ -40,7 +40,7 @@ export default function VideoPlayer({ videoSrc, posterSrc, title }: VideoPlayerP
         src={posterSrc}
         alt={title}
         fill
-        sizes="(min-width: 1280px) 400px, 30vw"
+        sizes="(min-width: 768px) 30vw, 70vw"
         className="object-cover"
       />
       {shouldLoad && (

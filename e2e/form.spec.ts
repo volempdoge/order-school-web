@@ -65,6 +65,29 @@ test.describe("registration form", () => {
     await expect(page.getByRole("dialog")).toBeVisible();
     expect(submissions[0]).toMatchObject({ role: "parent", consent: true, guardianConsent: null });
   });
+
+  test("shows a failed submit inside the form and keeps the entered values", async ({ page }) => {
+    await page.route(/script\.google\.com\/macros\//, (route) => route.abort("internetdisconnected"));
+    await fillForm(page, "parent");
+    await page.getByLabel(/Я є батьком\/матірʼю/).check();
+    await page.getByRole("button", { name: "Надіслати форму" }).click();
+
+    await expect(page.getByRole("alert").filter({ hasText: "Не вдалося надіслати форму" })).toBeVisible();
+    await expect(page.getByRole("dialog")).toBeHidden();
+    await expect(page.getByLabel("Електронна пошта")).toHaveValue("test@example.com");
+    await expect(page.getByLabel(/Я є батьком\/матірʼю/)).toBeChecked();
+  });
+
+  test("restores a draft after a reload, but not the consents", async ({ page }) => {
+    await fillForm(page, "student");
+    await page.getByLabel(/Я даю згоду на обробку/).check();
+    await page.reload();
+
+    await expect(page.getByLabel("Електронна пошта")).toHaveValue("test@example.com");
+    await expect(page.getByRole("radio", { name: "Школяр" })).toBeChecked();
+    await expect(page.getByLabel("Клас")).toHaveText("10");
+    await expect(page.getByLabel(/Я даю згоду на обробку/)).not.toBeChecked();
+  });
 });
 
 async function fillForm(page: Page, role: "student" | "parent") {

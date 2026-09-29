@@ -23,20 +23,20 @@ const columns = [
 
 export default function Structure({ id }: { id?: string }) {
   return (
-    <section className="min-h-screen w-full overflow-x-hidden py-20" id={id}>
-      <div className="mx-auto max-w-4xl px-4">
+    <section className="w-full overflow-x-hidden py-12 md:py-20" id={id}>
+      <div className="mx-auto max-w-4xl px-6">
         <div data-reveal="up">
           <SectionHeading>Структура курсу</SectionHeading>
         </div>
 
-        <p data-reveal="up" className="mt-8 text-justify type-lead">
+        <p data-reveal="up" className="mt-8 type-lead md:text-justify md:hyphens-auto">
           Річну програму гуртка поділено на тематичні модулі. Кожен навчальний модуль триває 2 тижні і
           складається з трьох логічно повʼязаних занять: «Теорія», «Практика» та «Досвід».
         </p>
       </div>
 
-      <div className="mt-16 flex w-full justify-center px-4">
-        <div className="grid max-w-7xl grid-cols-1 items-end gap-24 md:grid-cols-2 md:gap-8 lg:grid-cols-3 lg:gap-12 xl:gap-16">
+      <div className="mt-16 flex w-full justify-center px-6">
+        <div className="grid max-w-7xl grid-cols-1 items-end gap-16 md:grid-cols-2 md:gap-8 lg:grid-cols-3 lg:gap-12 xl:gap-16">
           {columns.map((item, index) => (
             <div
               key={item.title}

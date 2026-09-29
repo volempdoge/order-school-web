@@ -17,12 +17,12 @@ function TeacherCard({ teacher, photo }: { teacher: (typeof teachers)[number]; p
   return (
     <article className="flex h-full flex-col gap-6">
       <div className="overflow-hidden rounded-lg border border-foreground bg-background">
-        <div className="relative h-[420px]">
+        <div className="relative aspect-4/5 md:aspect-auto md:h-[420px]">
           <Image
             src={photo}
             alt={`${teacher.name}, викладацька команда Гуртка політичних студій KSE`}
             fill
-            sizes="(min-width: 1024px) 300px, (min-width: 768px) 33vw, 100vw"
+            sizes="(min-width: 1024px) 300px, (min-width: 768px) 33vw, 80vw"
             className="object-cover"
           />
         </div>
@@ -51,18 +51,19 @@ function TeacherCard({ teacher, photo }: { teacher: (typeof teachers)[number]; p
 
 export default function Teachers({ id }: { id?: string }) {
   return (
-    <section id={id} className="min-h-screen w-full py-20">
-      <div data-reveal="up" className="mx-auto mb-12 max-w-6xl px-4 md:mb-16">
+    <section id={id} className="w-full py-12 md:py-20">
+      <div data-reveal="up" className="mx-auto mb-12 max-w-6xl px-6 md:mb-16">
         <SectionHeading>Викладачі</SectionHeading>
       </div>
-      <div className="mx-auto max-w-5xl px-4">
-        <div className="grid grid-cols-1 gap-x-12 gap-y-12 md:auto-rows-[minmax(0,1fr)] md:grid-cols-3 md:gap-y-0">
+      {/* Phones: a swipeable row that peeks the next card, like the interviews. From md: three columns */}
+      <div className="mx-auto max-w-5xl md:px-6">
+        <div className="flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto px-6 pb-2 [scrollbar-width:none] md:grid md:auto-rows-[minmax(0,1fr)] md:grid-cols-3 md:gap-x-12 md:overflow-visible md:px-0 md:pb-0">
           {cards.map((teacher, index) => (
             <div
               key={teacher.name}
               data-reveal="up"
               style={{ "--reveal-delay": `${index * 0.15}s` } as React.CSSProperties}
-              className="h-full"
+              className="w-[80vw] max-w-sm shrink-0 snap-start md:w-auto md:max-w-none"
             >
               <TeacherCard teacher={teacher} photo={teacher.photo} />
             </div>

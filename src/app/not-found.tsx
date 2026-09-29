@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen items-center px-6 pt-28 pb-20 md:pt-44">
+    <main className="flex min-h-screen items-center px-6 pt-28 pb-20 md:pt-36">
       <div className="mx-auto w-full max-w-3xl">
         <p aria-hidden className="font-display text-[5rem] leading-none text-primary md:text-[9rem]">
           404

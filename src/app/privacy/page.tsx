@@ -12,7 +12,7 @@ const UPDATED_AT = "29 вересня 2026 р.";
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen bg-background px-4 pt-28 pb-20 md:pt-48">
+    <main className="min-h-screen bg-background px-4 pt-28 pb-20 md:pt-36">
       <article className="mx-auto max-w-3xl space-y-6 rounded-lg bg-card p-6 type-body shadow-xl md:p-12 [&_a]:font-bold [&_a]:text-primary-strong [&_a]:underline [&_a]:underline-offset-2 [&_h2]:mt-10 [&_h2]:type-h3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6 [&_ul]:marker:text-primary">
         <header className="space-y-2">
           <h1 className="type-h2">Політика конфіденційності</h1>

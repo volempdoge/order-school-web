@@ -40,6 +40,7 @@ function jsonLd(modules: TimelineModule[]) {
       postalCode: site.address.postalCode,
       addressCountry: site.address.country,
     },
+    hasMap: site.address.mapUrl,
   };
 
   const course = {

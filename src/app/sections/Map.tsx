@@ -1,10 +1,9 @@
-"use client";
-
 export default function Map() {
   return (
-    <section className="relative w-full">
+    <section className="relative w-full" aria-label="Як нас знайти">
       <iframe
-        className="w-full h-[50vh] pointer-events-auto"
+        title="Київська школа економіки на Google Maps"
+        className="pointer-events-auto h-[50vh] w-full"
         style={{ border: 0 }}
         allowFullScreen
         loading="lazy"

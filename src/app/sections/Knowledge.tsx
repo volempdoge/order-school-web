@@ -1,107 +1,83 @@
-"use client";
-
-import knowledge from "@/assets/knowledge.png";
-import knowledgeMobile from "@/assets/knowledge-mobile.svg";
-import redRectangle from "@/assets/Skills_Rounded_Rectangle_knowledge-mobile.svg";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { AnimatedProps } from "@/types/motion";
 
-export default function Knowledge({ id }: AnimatedProps) {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
+import knowledgeRoute from "@/assets/knowledge-route.webp";
+import SectionHeading from "@/components/SectionHeading";
+import { knowledgeTopics } from "@/content/site";
 
-  const y1 = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const opacity1 = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [0, 1, 1, 0]
-  );
+// Where each topic sits on the route illustration (desktop), in % of the image,
+// and after which word the label breaks onto its second line. Same order as knowledgeTopics.
+const ROUTE_LABELS = [
+  { left: 18.6, top: 17.4, breakAfter: 2 },
+  { left: 53.9, top: 27.5, breakAfter: 2 },
+  { left: 24.5, top: 47.2, breakAfter: 3 },
+  { right: 24.7, top: 50, breakAfter: 2 },
+  { left: 18.8, top: 71.3, breakAfter: 2 },
+  { left: 43.1, top: 78.6, breakAfter: 2 },
+] as const;
 
-  const scaleImg = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1, 1.1]);
-  const opacityText = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [0, 1, 1, 0]
-  );
+function splitLabel(text: string, breakAfter: number) {
+  const words = text.split(" ");
+  return [words.slice(0, breakAfter).join(" "), words.slice(breakAfter).join(" ")] as const;
+}
 
+export default function Knowledge({ id }: { id?: string }) {
   return (
-    <section
-      ref={ref}
-      className="w-full md:min-h-screen py-12 md:py-20 overflow-x-hidden"
-      id={id}
-    >
-      {/* Desktop header */}
-      <motion.div
-        style={{ opacity: opacity1, y: y1 }}
-        className="max-w-6xl mx-auto text-center text-foreground px-6 md:px-4"
-      >
-        <h2 className="hidden md:block text-[22px] leading-[30px] md:text-4xl tracking-normal md:tracking-wider uppercase font-sans font-bold mb-2">
-          Навички і знання, які ти отримаєш
-        </h2>
-        <h3 className="hidden md:block text-lg font-mono font-medium">
-          Ти розберешся, як працює політика на різних рівнях — від ідей та
-          історії до сучасних процесів:
-        </h3>
-      </motion.div>
+    <section id={id} className="w-full overflow-x-hidden py-12 md:py-20 lg:min-h-screen">
+      <div data-reveal="up" className="mx-auto max-w-6xl px-6 text-left md:px-4 md:text-center">
+        <SectionHeading align="responsive">Навички і знання, які ви отримаєте</SectionHeading>
+        <p className="mt-6 type-lead">
+          Ви розберетеся, як працює політика на різних рівнях — від ідей та історії до сучасних процесів:
+        </p>
+      </div>
 
-      {/* Mobile header */}
-      <motion.div
-        style={{ opacity: opacity1, y: y1 }}
-        className="block md:hidden max-w-6xl mx-auto text-left text-foreground px-6"
-      >
-        <div className="relative inline-block mb-2">
-          <Image
-            src={redRectangle}
-            alt=""
-            className="absolute -top-3 right-6 w-[40px] h-[60px]"
-            width={40}
-            height={60}
-          />
-          <h2 className="text-[22px] leading-[30px] uppercase font-sans font-bold relative z-10">
-            Навички і знання,
-            <br />
-            які ви отримаєте
-          </h2>
+      {/* Topics are real text. Phones/tablets: a vertical route. Desktop: labels placed on the illustration. */}
+      <div data-reveal="zoom" className="mt-8 w-full">
+        <div className="@container relative hidden lg:block">
+          <Image src={knowledgeRoute} alt="" aria-hidden sizes="100vw" className="h-auto w-full" />
+          <ol className="absolute inset-0">
+            {knowledgeTopics.map((topic, index) => {
+              const place = ROUTE_LABELS[index];
+              if (!place) return null;
+              const [first, second] = splitLabel(topic, place.breakAfter);
+              return (
+                <li
+                  key={topic}
+                  className={`absolute text-[1.31cqw] leading-[1.2] font-bold tracking-[0.06em] uppercase ${"right" in place ? "text-right" : ""}`}
+                  style={{
+                    top: `${place.top}%`,
+                    ...("right" in place ? { right: `${place.right}%` } : { left: `${place.left}%` }),
+                  }}
+                >
+                  {/* The space keeps the words apart in the text itself, the <br> only breaks the line */}
+                  {first} <br />
+                  {second}
+                </li>
+              );
+            })}
+          </ol>
         </div>
-        <h3 className="text-[15px] leading-[20px] font-mono font-medium mb-6">
-          Ви розберетеся, як працює політика на різних рівнях — від ідей та історії
-          до сучасних процесів:
-        </h3>
-      </motion.div>
 
-      <motion.div
-        style={{ scale: scaleImg, opacity: opacity1 }}
-        className="w-full mt-6 md:mt-8 overflow-hidden px-4 md:px-0"
-      >
-        {/* Desktop version */}
-        <Image
-          src={knowledge}
-          alt="Навички і знання, які ти отримаєш"
-          className="hidden md:block w-full h-auto max-w-full object-contain"
-          priority
-        />
-        {/* Mobile version */}
-        <Image
-          src={knowledgeMobile}
-          alt="Навички і знання"
-          className="block md:hidden w-full h-auto max-w-full object-contain"
-          priority
-        />
-      </motion.div>
+        <ol className="mx-6 border-l-2 border-primary md:mx-auto md:max-w-xl lg:hidden">
+          {knowledgeTopics.map((topic) => (
+            <li key={topic} className="relative py-3 pl-8 font-bold tracking-wide uppercase">
+              {/* The red cross marker from the illustration */}
+              <span aria-hidden className="absolute top-1/2 -left-[9px] size-4 -translate-y-1/2">
+                <span className="absolute top-1/2 left-0 h-1 w-4 -translate-y-1/2 rounded-full bg-primary" />
+                <span className="absolute top-0 left-1/2 h-4 w-1 -translate-x-1/2 rounded-full bg-primary" />
+              </span>
+              {topic}
+            </li>
+          ))}
+        </ol>
+      </div>
 
-      <motion.div
-        style={{ opacity: opacityText, y: y1 }}
-        className="hidden md:block max-w-4xl mt-6 md:mt-8 font-mono font-medium text-justify text-[15px] leading-[20px] md:text-lg bg-primary px-6 md:px-8 py-6 md:py-6 rounded-[24px] md:rounded-2xl text-white mx-4 md:mx-auto"
+      <div
+        data-reveal="up"
+        className="mx-auto mt-8 hidden max-w-4xl rounded-lg bg-primary px-8 py-6 font-body text-xl leading-snug font-bold text-white md:block"
       >
-        Крім цього, на тебе чекають візити до посольств, зустрічі з відомими
-        спікерами та дослідницькі завдання, щоб глибше зрозуміти політичні
-        процеси.
-      </motion.div>
+        Крім цього, на вас чекають візити до посольств, зустрічі з відомими експертами та дослідницькі
+        завдання, щоб глибше зрозуміти політичні процеси.
+      </div>
     </section>
   );
 }

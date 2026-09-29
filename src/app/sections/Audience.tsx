@@ -1,163 +1,68 @@
-"use client";
+import Link from "next/link";
 
-import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
-import Image from "next/image";
-import audience from "@/assets/audience.png";
+import audienceDesktop from "@/assets/audience.webp";
 import audienceMobile from "@/assets/audience-mobile.png";
+import ArtDirectedImage from "@/components/ArtDirectedImage";
+import SectionHeading from "@/components/SectionHeading";
 import { Button } from "@/components/ui/button";
+import { audience } from "@/content/site";
 
-type AnimatedProps = { id?: string };
-
-export default function Audience({ id }: AnimatedProps) {
-  const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (inView) {
-      controls.start({
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.8, ease: "easeOut" },
-      });
-    } else {
-      controls.start({
-        opacity: 0,
-        y: 50,
-      });
-    }
-  }, [controls, inView]);
-
+function AudienceItem({ text }: { text: string }) {
+  // Highlight the word "спеціальності" the same way the design does
+  const [before, after] = text.split("спеціальності");
   return (
-    <section
-      id={id}
-      ref={ref}
-      className="relative w-full min-h-screen py-10 md:py-20"
-    >
-      {/* Mobile Layout */}
-      <div className="md:hidden relative min-h-screen overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute top-10 left-20 right-0 z-0 h-[60vh]">
-          <Image 
-            src={audienceMobile} 
-            alt="Background" 
-            fill
-            className="object-cover object-top"
-            quality={100}
-            priority
+    <>
+      {before}
+      {after !== undefined && (
+        <>
+          <span className="font-bold text-primary-strong">спеціальності</span>
+          {after}
+        </>
+      )}
+    </>
+  );
+}
+
+export default function Audience({ id }: { id?: string }) {
+  return (
+    <section id={id} className="relative min-h-screen w-full py-10 md:py-20">
+      <div className="relative min-h-screen overflow-hidden md:mx-auto md:grid md:min-h-0 md:max-w-7xl md:grid-cols-2 md:items-center md:gap-12 md:overflow-visible md:px-8">
+        <div data-reveal="up" className="relative z-10 px-6 py-8 md:p-0">
+          <SectionHeading align="left">
+            Для кого створений <br className="hidden md:inline" />
+            Гурток політичних <br className="hidden md:inline" />
+            студій
+          </SectionHeading>
+
+          <ul className="my-8 space-y-4 md:my-10 md:space-y-6">
+            {audience.map((item, index) => (
+              <li
+                key={item}
+                className="flex items-start gap-3 rounded-lg bg-background/85 p-5 backdrop-blur-sm md:gap-4 md:rounded-none md:bg-transparent md:p-0 md:backdrop-blur-none"
+              >
+                <span aria-hidden className="mt-1.5 size-3 flex-shrink-0 rounded-full bg-primary" />
+                <span className={`type-lead ${index === 0 ? "font-bold" : ""}`}>
+                  <AudienceItem text={item} />
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <Button asChild size="lg" className="w-full sm:w-auto">
+            <Link href="/onboarding">Дізнатися більше</Link>
+          </Button>
+        </div>
+
+        {/* Phones: faded background behind the list. Desktop: illustration in the right column */}
+        <div data-reveal="up" className="absolute top-10 right-0 left-20 z-0 h-[60vh] md:static md:h-auto">
+          <ArtDirectedImage
+            mobile={audienceMobile}
+            desktop={audienceDesktop}
+            alt="Колаж: люди дивляться на ноутбук, з якого виростає друкарська машинка, — ілюстрація для розділу «Для кого»"
+            sizes="100vw"
+            desktopSizes="(min-width: 1280px) 600px, 50vw"
+            className="h-full w-full object-cover object-top md:h-auto md:object-contain"
           />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 px-6 py-8">
-          <h2 className="text-2xl tracking-tight uppercase font-mono font-bold mb-8 text-black leading-tight">
-            Для кого створений Гурток Політичних Студій
-          </h2>
-
-          <div className="space-y-4 mb-8">
-            {/* Item 1 */}
-            <div className="bg-[#E8DDD0]/80 backdrop-blur-sm rounded-2xl p-5 flex items-start gap-3">
-              <span className="w-5 h-5 rounded-full bg-primary mt-0.5 flex-shrink-0"></span>
-              <span className="font-mono font-bold text-base text-black leading-snug">Учні 8-11 класів</span>
-            </div>
-
-            {/* Item 2 */}
-            <div className="bg-[#E8DDD0]/80 backdrop-blur-sm rounded-2xl p-5 flex items-start gap-3">
-              <span className="w-5 h-5 rounded-full bg-primary mt-0.5 flex-shrink-0"></span>
-              <span className="font-mono font-medium text-base text-black leading-snug">
-                Плануєте вступати на{" "}
-                <span className="text-primary font-bold">спеціальності</span>{" "}
-                політологія, міжнародні відносини, право, соціологія, філософія, журналістика
-              </span>
-            </div>
-
-            {/* Item 3 */}
-            <div className="bg-[#E8DDD0]/80 backdrop-blur-sm rounded-2xl p-5 flex items-start gap-3">
-              <span className="w-5 h-5 rounded-full bg-primary mt-0.5 flex-shrink-0"></span>
-              <span className="font-mono font-medium text-base text-black leading-snug">
-                Бажаєте здобути загальну ерудицію у питаннях політичних та соціальних процесів
-              </span>
-            </div>
-
-            {/* Item 4 */}
-            <div className="bg-[#E8DDD0]/80 backdrop-blur-sm rounded-2xl p-5 flex items-start gap-3">
-              <span className="w-5 h-5 rounded-full bg-primary mt-0.5 flex-shrink-0"></span>
-              <span className="font-mono font-medium text-base text-black leading-snug">
-                Ще не визначилися з напрямом, але зацікавлені у соціальних науках
-              </span>
-            </div>
-          </div>
-
-          <a href="/onboarding">
-            <Button className="text-base bg-[#F42B39] py-7 px-8 uppercase font-medium font-mono tracking-wide hover:bg-white hover:text-primary cursor-pointer rounded-[20px] w-full">
-              Дізнатися більше
-            </Button>
-          </a>
-        </div>
-      </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden md:block">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="grid grid-cols-2 gap-12 items-center">
-            {/* Ліва колонка */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={controls}
-              className="space-y-10"
-            >
-              <h2 className="text-3xl lg:text-4xl tracking-wide uppercase font-sans font-bold text-black leading-tight">
-                Для кого створений<br />Гурток Політичних<br />Студій
-              </h2>
-
-              <ul className="space-y-6 text-black font-sans">
-                <li className="flex items-start gap-4">
-                  <span className="w-3 h-3 rounded-full bg-primary mt-1.5 flex-shrink-0"></span>
-                  <span className="font-mono font-bold text-lg">Учні 8-11 класів</span>
-                </li>
-                <li className="flex items-start gap-4">
-                  <span className="w-3 h-3 rounded-full bg-primary mt-1.5 flex-shrink-0"></span>
-                  <span className="font-mono font-bold text-lg">
-                    Ті, хто планує вступати на{" "}
-                    <span className="text-primary font-bold">спеціальності:</span>{" "}
-                    політологія, міжнародні відносини, право, соціологія, філософія, журналістика
-                  </span>
-                </li>
-                <li className="flex items-start gap-4">
-                  <span className="w-3 h-3 rounded-full bg-primary mt-1.5 flex-shrink-0"></span>
-                  <span className="font-mono font-bold text-lg">
-                    Ще не визначилися з напрямом, але зацікавлені в соціальних науках
-                  </span>
-                </li>
-                <li className="flex items-start gap-4">
-                  <span className="w-3 h-3 rounded-full bg-primary mt-1.5 flex-shrink-0"></span>
-                  <span className="font-mono font-bold text-lg">
-                    Бажаючі здобути загальну ерудицію в питаннях політичних та соціальних процесів
-                  </span>
-                </li>
-              </ul>
-
-              <a href="/onboarding">
-                <Button className="text-xl py-7 px-12 uppercase font-bold font-sans tracking-wide hover:bg-white hover:text-primary cursor-pointer rounded-[20px]">
-                  Дізнатися більше
-                </Button>
-              </a>
-            </motion.div>
-
-            {/* Права колонка - зображення */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={controls}
-              className="relative"
-            >
-              <Image 
-                src={audience} 
-                alt="Audience Image" 
-                className="w-full h-auto"
-              />
-            </motion.div>
-          </div>
         </div>
       </div>
     </section>

@@ -1,51 +1,51 @@
-"use client"
-import { useState } from "react";
-
-import Video from "next-video";
-import Instaplay from "player.style/instaplay/react";
-
+"use client";
+import dynamic from "next/dynamic";
+import Image, { type StaticImageData } from "next/image";
 import type { Asset } from "next-video/dist/assets.js";
-import type { StaticImageData } from "next/image";
+import { useEffect, useRef, useState } from "react";
 
-import { Skeleton } from "@/components/ui/skeleton";
+// The player (next-video + player.style) is heavy, so it is only loaded
+// when the video is about to scroll into view. Until then the poster is shown.
+const VideoPlayerInner = dynamic(() => import("./VideoPlayerInner"), { ssr: false });
 
 interface VideoPlayerProps {
   videoSrc: Asset | string;
-  posterSrc: StaticImageData | string;
-  name?: string;
-  grade?: string;
+  posterSrc: StaticImageData;
+  title: string;
 }
 
-export default function VideoPlayer({ videoSrc, posterSrc, name, grade }: VideoPlayerProps) {
-  const [isLoading, setIsLoading] = useState(true);
+export default function VideoPlayer({ videoSrc, posterSrc, title }: VideoPlayerProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="rounded-2xl relative overflow-hidden">
-      {isLoading && (
-        <Skeleton className="absolute inset-0 rounded-2xl aspect-9/16" />
-      )}
-      <Video
-        src={videoSrc}
-        theme={Instaplay}
-        poster={posterSrc}
-        onLoadedData={() => setIsLoading(false)}
-        onCanPlay={() => setIsLoading(false)}
-        style={{
-          "--media-primary-color": "#FFFFFF",
-          "--media-secondary-color": "#F42B39",
-          "--media-accent-color": "#F42B39",
-          opacity: isLoading ? 0 : 1,
-          transition: "opacity 0.3s ease-in-out",
-        }}
+    <div ref={ref} className="relative aspect-9/16 overflow-hidden rounded-lg">
+      <Image
+        src={posterSrc}
+        alt={title}
+        fill
+        sizes="(min-width: 1280px) 400px, 30vw"
+        className="object-cover"
       />
-      {name && grade && (
-        <div className="absolute bottom-8 left-0 right-0 text-center text-white z-20 pointer-events-none">
-          <h3 className="font-sans font-bold text-xl md:text-2xl uppercase tracking-wide">
-            {name}
-          </h3>
-          <p className="font-sans text-lg md:text-xl">
-            {grade}
-          </p>
+      {shouldLoad && (
+        <div className="absolute inset-0">
+          <VideoPlayerInner videoSrc={videoSrc} posterSrc={posterSrc} />
         </div>
       )}
     </div>

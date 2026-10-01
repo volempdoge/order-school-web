@@ -5,9 +5,10 @@ import heroMobile from "@/assets/hero-mobile.webp";
 import ArtDirectedImage from "@/components/ArtDirectedImage";
 import { Button } from "@/components/ui/button";
 
+// Dark until the photo arrives, so the transparent header never sits on beige
 export default function Hero({ id }: { id?: string }) {
   return (
-    <section id={id} className="relative min-h-screen w-full overflow-hidden">
+    <section id={id} data-hero className="relative min-h-screen w-full overflow-hidden bg-foreground">
       <div className="absolute inset-0 z-0 md:border-b-4 md:border-primary">
         <ArtDirectedImage
           mobile={heroMobile}

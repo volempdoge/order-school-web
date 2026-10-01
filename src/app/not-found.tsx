@@ -40,7 +40,7 @@ export default function NotFound() {
               <li key={link.href}>
                 <Link
                   href={`/${link.href}`}
-                  className="font-bold text-primary-strong underline underline-offset-4 hover:text-foreground"
+                  className="font-bold text-primary underline underline-offset-4 hover:text-foreground"
                 >
                   {link.text}
                 </Link>

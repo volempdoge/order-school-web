@@ -1,3 +1,5 @@
+import type { Viewport } from "next";
+
 import { faq, site, SITE_URL } from "@/content/site";
 import { getTimeline, kyivISODate, type TimelineModule } from "@/lib/modules";
 
@@ -14,6 +16,11 @@ import Structure from "./sections/Structure";
 import Teachers from "./sections/Teachers";
 import Timeline from "./sections/Timeline";
 import Videos from "./sections/Videos";
+
+// The page opens on the dark hero photo, so the browser's top bar starts dark (the header then keeps it in sync)
+export const viewport: Viewport = {
+  themeColor: "#191A21",
+};
 
 // Modules come from Notion: the page is static HTML, regenerated at most once a minute
 export const revalidate = 60;
@@ -100,8 +107,8 @@ export default async function Home() {
       <Structure id="structure" />
       <Timeline id="timeline" modules={modules} unavailable={unavailable} />
       <Audience id="audience" />
-      <Videos id="interview" />
       <Teachers id="teachers" />
+      <Videos id="interview" />
       <NamedAfter />
       <Faq id="faq" />
       <Contacts id="contacts" />

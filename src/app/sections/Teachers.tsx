@@ -57,7 +57,7 @@ export default function Teachers({ id }: { id?: string }) {
       </div>
       {/* Phones: a swipeable row that peeks the next card, like the interviews. From md: three columns */}
       <div className="mx-auto max-w-5xl md:px-6">
-        <div className="flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto px-6 pb-2 [scrollbar-width:none] md:grid md:auto-rows-[minmax(0,1fr)] md:grid-cols-3 md:gap-x-12 md:overflow-visible md:px-0 md:pb-0">
+        <div className="flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto overscroll-x-contain px-6 pb-2 [scrollbar-width:none] md:grid md:auto-rows-[minmax(0,1fr)] md:grid-cols-3 md:gap-x-12 md:overflow-visible md:px-0 md:pb-0">
           {cards.map((teacher, index) => (
             <div
               key={teacher.name}

@@ -15,7 +15,7 @@ function AudienceItem({ text }: { text: string }) {
       {before}
       {after !== undefined && (
         <>
-          <span className="font-bold text-primary-strong">спеціальності</span>
+          <span className="font-bold text-primary">спеціальності</span>
           {after}
         </>
       )}
@@ -54,7 +54,7 @@ export default function Audience({ id }: { id?: string }) {
         </div>
 
         {/* Phones: faded background behind the list. Desktop: illustration in the right column */}
-        <div data-reveal="up" className="absolute top-10 right-0 left-20 z-0 h-[60vh] md:static md:h-auto">
+        <div data-reveal="up" className="absolute top-44 right-0 left-20 z-0 h-[60vh] md:static md:h-auto">
           <ArtDirectedImage
             mobile={audienceMobile}
             desktop={audienceDesktop}

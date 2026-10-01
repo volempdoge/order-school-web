@@ -22,7 +22,7 @@ function Disclosure({
     <details className={cn("disclosure group border-b-2", className)} {...props}>
       <summary
         className={cn(
-          "flex cursor-pointer list-none items-start justify-between gap-4 rounded-md py-4 text-left font-body text-base font-bold transition-colors outline-none hover:text-primary-strong focus-visible:ring-[3px] focus-visible:ring-ring/60 md:py-5 md:text-xl [&::-webkit-details-marker]:hidden",
+          "flex cursor-pointer list-none items-start justify-between gap-4 rounded-md py-4 text-left font-body text-base font-bold transition-colors outline-none hover:text-primary focus-visible:ring-[3px] focus-visible:ring-ring/60 md:py-5 md:text-xl [&::-webkit-details-marker]:hidden",
           summaryClassName,
         )}
       >

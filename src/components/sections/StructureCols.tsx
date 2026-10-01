@@ -4,10 +4,10 @@ export default function StructureCols({ paragph1, paragph2, span, header }: Stru
   return (
     <div className="max-w-96">
       <h3 className="type-h3">{header}</h3>
-      <div className="mt-3 type-body">
+      <div className="mt-3 text-justify type-body hyphens-auto">
         <p>{paragph1}</p>
         <p className="mt-4">
-          <span className="font-bold text-primary-strong">{span} </span>
+          <span className="font-bold text-primary">{span} </span>
           {paragph2}
         </p>
       </div>

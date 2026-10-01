@@ -6,7 +6,7 @@ import ArtDirectedImage from "@/components/ArtDirectedImage";
 import SectionHeading from "@/components/SectionHeading";
 import { Button } from "@/components/ui/button";
 
-const accent = "text-primary-strong font-bold";
+const accent = "text-primary font-bold";
 
 export default function AboutCourse() {
   return (
@@ -30,7 +30,7 @@ export default function AboutCourse() {
           style={{ "--reveal-delay": "0.2s" } as React.CSSProperties}
           className="relative z-20 lg:col-span-2 lg:row-span-2 lg:row-start-2 lg:ml-16"
         >
-          <div className="space-y-4 type-body md:max-w-4xl md:space-y-6 lg:text-justify lg:hyphens-auto">
+          <div className="space-y-4 text-justify type-body hyphens-auto md:max-w-4xl md:space-y-6">
             <p>
               Це практичний курс від факультету соціальних наук <span className={accent}>KSE</span> для{" "}
               <span className={accent}>учнів 8–11 класів</span>, які хочуть глибше зрозуміти політику та
@@ -45,8 +45,8 @@ export default function AboutCourse() {
             </p>
           </div>
 
-          <div className="mt-8 mb-6 md:mt-10 lg:mt-12 lg:mb-0">
-            <p className="mb-4 hidden type-lead font-bold md:block">Поспішайте, кількість місць обмежена</p>
+          <div className="mt-8 mb-8 md:mt-10 lg:mt-12 lg:mb-0">
+            <p className="mb-4 type-lead font-bold">Поспішайте, кількість місць обмежена</p>
             <Button asChild size="lg" className="w-full sm:w-auto">
               <Link href="/onboarding">Дізнатися більше</Link>
             </Button>
@@ -57,7 +57,7 @@ export default function AboutCourse() {
         <div
           data-reveal="up-md-right"
           style={{ "--reveal-delay": "0.3s" } as React.CSSProperties}
-          className="relative z-10 -mt-25 -mr-11 -ml-1 md:mt-0 md:-mr-8 md:ml-auto md:max-w-[560px] lg:col-start-3 lg:row-span-3 lg:row-start-1 lg:m-0 lg:flex lg:max-w-none lg:items-end lg:justify-end"
+          className="relative z-10 -mr-11 -ml-1 md:-mr-8 md:ml-auto md:max-w-[560px] lg:col-start-3 lg:row-span-3 lg:row-start-1 lg:m-0 lg:flex lg:max-w-none lg:items-end lg:justify-end"
         >
           <div className="relative aspect-3/2 w-full md:aspect-square lg:aspect-4/5 lg:max-w-[760px]">
             <ArtDirectedImage

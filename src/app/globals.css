@@ -4,18 +4,23 @@
 /* The site has no dark theme: `dark:` classes from shadcn components must never apply */
 @custom-variant dark (&:is(.dark *));
 
+/* The header (and anything inside it) while it is transparent: the page has a hero photo
+   ([data-hero]) and isn't scrolled. Pure CSS, so the server HTML can never disagree with the client. */
+@custom-variant over-hero (html:has([data-hero]) &:where(header:not([data-scrolled]), header:not([data-scrolled]) *));
+
 /*
   Design tokens. Everything on the site must use these — no raw hex values in components.
 
   Fonts (2):
-    display — Cy Grotesk Wide: headings, numbers, big accents. Single face, always uppercase.
+    display — Cy Grotesk Wide: headings, numbers, big accents, quotes and module titles. Single face;
+              uppercase except in quotes and module titles.
     body    — Gotham Pro: running text, UI, buttons, forms.
 
   Colors (5 + white):
-    primary         #F42B39  brand red: fills, borders, icons and LARGE text only
-                             (white on it = 4.0:1, on beige = 3.1:1 → WCAG AA for large text).
-    primary-strong  #C70A17  the only other red: small red text on light backgrounds,
-                             small labels on red, hover of red controls (4.6:1 on beige, 6:1 under white).
+    primary         #F42B39  the one accent red: fills, borders, icons, highlighted and linked text,
+                             labels, errors, focus rings. Contrast: white on it 4.0:1, on beige 3.1:1 —
+                             below WCAG AA for small text, a deliberate brand decision.
+    primary-strong  #C70A17  hover/pressed state of red buttons only, never a resting color.
     background      #E6E1D0  brand beige, the page and section surface.
     foreground      #191A21  ink: all text on light backgrounds, dark surfaces.
     muted-foreground         ink at 70% — secondary text (5.6:1 on beige).
@@ -42,7 +47,7 @@
   --color-popover-foreground: var(--foreground);
   --color-accent: var(--background);
   --color-accent-foreground: var(--foreground);
-  --color-destructive: var(--primary-strong);
+  --color-destructive: var(--primary);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -67,7 +72,7 @@
   --card: #ffffff;
   --border: var(--primary);
   --input: color-mix(in srgb, var(--foreground) 35%, var(--card));
-  --ring: var(--primary-strong);
+  --ring: var(--primary);
 
   /* Lets <details> animate to height: auto */
   interpolate-size: allow-keywords;
@@ -143,11 +148,13 @@
   }
 }
 
+/* Quotes are set in the display face, but in sentence case */
 @utility type-quote {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.125rem;
-  line-height: 1.45;
+  font-size: 1.1875rem;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
 
   @media (width >= 48rem) {
     font-size: 1.875rem;
@@ -157,21 +164,21 @@
 
 @utility type-lead {
   font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: 1.0625rem;
+  line-height: 1.55;
 
   @media (width >= 48rem) {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
   }
 }
 
 @utility type-body {
   font-family: var(--font-body);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.6;
 
   @media (width >= 48rem) {
-    font-size: 1rem;
+    font-size: 1.125rem;
   }
 }
 

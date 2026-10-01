@@ -29,7 +29,7 @@ export default function Structure({ id }: { id?: string }) {
           <SectionHeading>Структура курсу</SectionHeading>
         </div>
 
-        <p data-reveal="up" className="mt-8 type-lead md:text-justify md:hyphens-auto">
+        <p data-reveal="up" className="mt-8 text-justify type-lead hyphens-auto">
           Річну програму гуртка поділено на тематичні модулі. Кожен навчальний модуль триває 2 тижні і
           складається з трьох логічно повʼязаних занять: «Теорія», «Практика» та «Досвід».
         </p>

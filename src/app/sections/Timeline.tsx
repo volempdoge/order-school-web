@@ -7,12 +7,12 @@ import { site } from "@/content/site";
 import { kyivISODate, type ModuleStatus, type TimelineModule } from "@/lib/modules";
 
 const badgeBase =
-  "font-bold uppercase text-xs px-2 py-0.5 rounded-sm tracking-wider border border-primary-strong";
+  "font-body font-bold uppercase text-xs px-2 py-0.5 rounded-sm tracking-wider border border-primary";
 
 const badges: Record<Exclude<ModuleStatus, null>, { text: string; className: string }> = {
-  триває: { text: "Триває", className: `bg-primary-strong text-white ${badgeBase}` },
-  наступний: { text: "Наступний", className: `text-primary-strong border-dashed ${badgeBase}` },
-  "незабаром початок": { text: "Незабаром початок", className: `bg-primary-strong text-white ${badgeBase}` },
+  триває: { text: "Триває", className: `bg-primary text-white ${badgeBase}` },
+  наступний: { text: "Наступний", className: `text-primary border-dashed ${badgeBase}` },
+  "незабаром початок": { text: "Незабаром початок", className: `bg-primary text-white ${badgeBase}` },
 };
 
 function StatusBadge({ status }: { status: ModuleStatus }) {
@@ -54,14 +54,14 @@ export default function Timeline({
                 href={site.telegram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold text-primary-strong underline underline-offset-2"
+                className="font-bold text-primary underline underline-offset-2"
               >
                 Telegram
               </a>{" "}
               або на{" "}
               <a
                 href={`mailto:${site.email}`}
-                className="font-bold text-primary-strong underline underline-offset-2"
+                className="font-bold text-primary underline underline-offset-2"
               >
                 {site.email}
               </a>{" "}
@@ -82,7 +82,7 @@ export default function Timeline({
                   <time dateTime={kyivISODate(module.startDate)}>{module.dateRange}</time>
                   <StatusBadge status={module.status} />
                 </span>
-                <span>
+                <span className="font-display font-bold tracking-[0.02em]">
                   Модуль {module.moduleId}: {module.title}
                 </span>
               </span>
@@ -92,7 +92,11 @@ export default function Timeline({
           </Disclosure>
         ))}
 
-        <Disclosure name="timeline" className="border-dashed" summary={<span>Інші модулі у розробці</span>}>
+        <Disclosure
+          name="timeline"
+          className="border-dashed"
+          summary={<span className="font-display font-bold tracking-[0.02em]">Інші модулі у розробці</span>}
+        >
           <p>
             Ми прагнемо зробити навчальні модулі захопливими і практичними. Для цього ми ретельно готуємо
             кожен модуль і залучаємо досвідчених експертів та лекторів. Тому точна інформація про нові модулі

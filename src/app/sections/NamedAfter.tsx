@@ -39,13 +39,13 @@ export default function NamedAfter() {
           data-reveal="up"
           className={`${columnPadding} pb-12 md:pb-16 lg:col-start-1 lg:row-start-3 lg:pb-20`}
         >
-          <p className="max-w-[800px] type-lead">
+          <p className="max-w-[800px] text-justify type-lead hyphens-auto">
             {namedAfter.text} Більше про його життя та захоплення читайте на{" "}
             <a
               href={namedAfter.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-bold text-primary-strong underline underline-offset-2"
+              className="font-bold text-primary underline underline-offset-2"
             >
               Ukrainer
             </a>
@@ -56,7 +56,7 @@ export default function NamedAfter() {
 
       <figure
         data-reveal="zoom"
-        className="mx-6 mt-12 max-w-6xl rounded-lg border-3 border-primary px-6 py-6 md:mx-auto md:mt-24 md:px-12 md:py-10"
+        className="mx-6 mt-12 max-w-6xl rounded-lg bg-primary px-6 py-6 text-white md:mx-auto md:mt-24 md:px-12 md:py-10"
       >
         <blockquote className="type-quote">
           «{namedAfter.quote}» — <cite className="not-italic">Леонід Пасько</cite>

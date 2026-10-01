@@ -83,9 +83,19 @@ export default function Footer() {
           <p>
             © {year} {site.fullName}
           </p>
-          <Link href="/privacy" className="underline-offset-4 hover:text-white hover:underline">
-            Політика конфіденційності
-          </Link>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <Link href="/privacy" className="underline-offset-4 hover:text-white hover:underline">
+              Політика конфіденційності
+            </Link>
+            {/* A route handler, not a page: a plain link, no client-side navigation */}
+            <a
+              href="/index.md"
+              type="text/markdown"
+              className="underline-offset-4 hover:text-white hover:underline"
+            >
+              Текстова версія (index.md)
+            </a>
+          </div>
         </div>
       </div>
     </footer>

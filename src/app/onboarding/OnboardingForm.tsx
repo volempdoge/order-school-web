@@ -94,7 +94,7 @@ function ConsentCheckbox({
           onBlur={onBlur}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className="mt-0.5 size-5 shrink-0 cursor-pointer accent-primary-strong"
+          className="mt-0.5 size-5 shrink-0 cursor-pointer accent-primary"
         />
         <label htmlFor={id} className="cursor-pointer type-small">
           {children}
@@ -201,7 +201,7 @@ export default function OnboardingForm() {
                     {(field) => (
                       <FieldGroup>
                         <FieldLabel htmlFor={field.name}>
-                          Електронна пошта <span className="text-primary-strong">*</span>
+                          Електронна пошта <span className="text-primary">*</span>
                         </FieldLabel>
                         <Input
                           id={field.name}
@@ -229,7 +229,7 @@ export default function OnboardingForm() {
                     {(field) => (
                       <FieldGroup>
                         <FieldLabel>
-                          Хто ви <span className="text-primary-strong">*</span>
+                          Хто ви <span className="text-primary">*</span>
                         </FieldLabel>
                         <RadioGroup
                           value={field.state.value}
@@ -265,7 +265,7 @@ export default function OnboardingForm() {
                     {(field) => (
                       <FieldGroup>
                         <FieldLabel htmlFor={field.name}>
-                          Ваше прізвище та імʼя <span className="text-primary-strong">*</span>
+                          Ваше прізвище та імʼя <span className="text-primary">*</span>
                         </FieldLabel>
                         <Input
                           id={field.name}
@@ -293,7 +293,7 @@ export default function OnboardingForm() {
                       <FieldGroup>
                         <FieldLabel htmlFor={field.name}>
                           Школа, у якій навчається ваша дитина (або ви, якщо ви школяр){" "}
-                          <span className="text-primary-strong">*</span>
+                          <span className="text-primary">*</span>
                         </FieldLabel>
                         <Input
                           id={field.name}
@@ -320,7 +320,7 @@ export default function OnboardingForm() {
                     {(field) => (
                       <FieldGroup>
                         <FieldLabel htmlFor={field.name}>
-                          Клас <span className="text-primary-strong">*</span>
+                          Клас <span className="text-primary">*</span>
                         </FieldLabel>
                         <Select value={field.state.value} onValueChange={keepOption(field.handleChange)}>
                           <SelectTrigger id={field.name} className="w-full bg-white px-4 text-base">
@@ -349,7 +349,7 @@ export default function OnboardingForm() {
                     {(field) => (
                       <FieldGroup>
                         <FieldLabel htmlFor={field.name}>
-                          Який модуль вас цікавить? <span className="text-primary-strong">*</span>
+                          Який модуль вас цікавить? <span className="text-primary">*</span>
                         </FieldLabel>
                         <Select value={field.state.value} onValueChange={keepOption(field.handleChange)}>
                           <SelectTrigger id={field.name} className="w-full bg-white px-4 text-base">
@@ -388,7 +388,7 @@ export default function OnboardingForm() {
                     {(field) => (
                       <FieldGroup>
                         <FieldLabel htmlFor={field.name}>
-                          Telegram для звʼязку з вами <span className="text-primary-strong">*</span>
+                          Telegram для звʼязку з вами <span className="text-primary">*</span>
                         </FieldLabel>
                         <Input
                           id={field.name}
@@ -421,7 +421,7 @@ export default function OnboardingForm() {
                     {(field) => (
                       <FieldGroup>
                         <FieldLabel htmlFor={field.name}>
-                          Ваш номер телефону <span className="text-primary-strong">*</span>
+                          Ваш номер телефону <span className="text-primary">*</span>
                         </FieldLabel>
                         <Input
                           id={field.name}
@@ -449,7 +449,7 @@ export default function OnboardingForm() {
                     {(field) => (
                       <FieldGroup>
                         <FieldLabel htmlFor={field.name}>
-                          Як ви дізналися про курс? <span className="text-primary-strong">*</span>
+                          Як ви дізналися про курс? <span className="text-primary">*</span>
                         </FieldLabel>
                         <Input
                           id={field.name}
@@ -491,11 +491,11 @@ export default function OnboardingForm() {
                             <Link
                               href="/privacy"
                               target="_blank"
-                              className="font-bold text-primary-strong underline underline-offset-2"
+                              className="font-bold text-primary underline underline-offset-2"
                             >
                               Політики конфіденційності
                             </Link>
-                            . <span className="text-primary-strong">*</span>
+                            . <span className="text-primary">*</span>
                           </ConsentCheckbox>
                         )}
                       </form.Subscribe>
@@ -526,7 +526,7 @@ export default function OnboardingForm() {
                               Мої батьки або інші законні представники ознайомлені з Політикою
                               конфіденційності та погоджуються на передачу моїх даних. Якщо мені ще не
                               виповнилося 14 років, форму заповнюють батьки.{" "}
-                              <span className="text-primary-strong">*</span>
+                              <span className="text-primary">*</span>
                             </ConsentCheckbox>
                           )}
                         </form.Field>
@@ -538,9 +538,9 @@ export default function OnboardingForm() {
                 {submitError && (
                   <div
                     role="alert"
-                    className="mt-8 rounded-lg border-2 border-primary-strong bg-background px-5 py-4 type-small"
+                    className="mt-8 rounded-lg border-2 border-primary bg-background px-5 py-4 type-small"
                   >
-                    <p className="font-bold text-primary-strong">Не вдалося надіслати форму</p>
+                    <p className="font-bold text-primary">Не вдалося надіслати форму</p>
                     <p className="mt-1">
                       Перевірте підключення до інтернету й натисніть «Надіслати» ще раз — усе, що ви ввели,
                       збережено. Якщо не вийде, напишіть нам у{" "}
@@ -548,14 +548,14 @@ export default function OnboardingForm() {
                         href={site.telegram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-bold text-primary-strong underline underline-offset-2"
+                        className="font-bold text-primary underline underline-offset-2"
                       >
                         Telegram
                       </a>{" "}
                       або на{" "}
                       <a
                         href={`mailto:${site.email}`}
-                        className="font-bold text-primary-strong underline underline-offset-2"
+                        className="font-bold text-primary underline underline-offset-2"
                       >
                         {site.email}
                       </a>

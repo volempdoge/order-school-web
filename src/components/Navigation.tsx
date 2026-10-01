@@ -28,10 +28,9 @@ export function Navigation() {
   const toggleRef = React.useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const isHome = pathname === "/";
-  // Only the home page has a dark hero under the header; elsewhere white text would sit on beige
-  const solid = scrolled || !isHome;
-  // On the home page anchors scroll in place (scroll-margin in globals.css keeps them below the header)
-  const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
+  // Section links always point at the home page: on it they just scroll in place
+  // (scroll-margin in globals.css keeps them below the header)
+  const sectionHref = (hash: string) => `/${hash}`;
 
   React.useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -59,6 +58,17 @@ export function Navigation() {
 
     return () => observer.disconnect();
   }, [isHome]);
+
+  // The browser's own top bar (theme-color) follows the header: dark over the hero photo, beige once solid.
+  // Otherwise phones paint a beige strip above the transparent header.
+  React.useEffect(() => {
+    const overHero = !scrolled && document.querySelector("[data-hero]") !== null;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    const color = getComputedStyle(document.documentElement).getPropertyValue(
+      overHero ? "--foreground" : "--background",
+    );
+    meta?.setAttribute("content", color.trim());
+  }, [scrolled, pathname]);
 
   // Mobile menu as a modal dialog: Escape closes it, Tab stays inside, the page behind doesn't scroll,
   // and focus returns to the menu button afterwards.
@@ -108,19 +118,24 @@ export function Navigation() {
 
   return (
     <>
+      {/* Solid by default; transparent over the hero photo until scrolled — see `over-hero` in globals.css */}
       <header
-        className={`fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between gap-2 px-4 transition-all duration-300 md:px-8 lg:gap-4 xl:gap-6 xl:px-12 2xl:px-20 ${
-          solid
-            ? "rounded-b-md bg-background text-foreground shadow-md md:h-24"
-            : "bg-transparent text-white md:h-36"
-        }`}
+        data-scrolled={scrolled || undefined}
+        className="fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between gap-2 rounded-b-md bg-background px-4 text-foreground shadow-md transition-all duration-300 md:h-24 md:px-8 lg:gap-4 xl:gap-6 xl:px-12 2xl:px-20 over-hero:rounded-none over-hero:bg-transparent over-hero:text-white over-hero:shadow-none md:over-hero:h-36"
       >
         <Link href="/" aria-label={`${site.name} — на головну`} className="shrink-0">
           <Image
-            src={solid ? logo_mobile : logo}
+            src={logo_mobile}
             alt={site.name}
             priority
-            className="h-7 w-auto cursor-pointer md:h-10 2xl:h-12"
+            className="h-7 w-auto cursor-pointer md:h-10 2xl:h-12 over-hero:hidden"
+          />
+          <Image
+            src={logo}
+            alt=""
+            aria-hidden
+            priority
+            className="hidden h-7 w-auto cursor-pointer md:h-10 2xl:h-12 over-hero:block"
           />
         </Link>
 
@@ -153,9 +168,9 @@ export function Navigation() {
           aria-expanded={mobileMenuOpen}
           aria-controls={MENU_ID}
         >
-          <span className={`h-[3px] w-full ${solid ? "bg-foreground" : "bg-white"} transition-colors`} />
-          <span className={`h-[3px] w-full ${solid ? "bg-foreground" : "bg-white"} transition-colors`} />
-          <span className={`h-[3px] w-full ${solid ? "bg-foreground" : "bg-white"} transition-colors`} />
+          <span className="h-[3px] w-full bg-foreground transition-colors over-hero:bg-white" />
+          <span className="h-[3px] w-full bg-foreground transition-colors over-hero:bg-white" />
+          <span className="h-[3px] w-full bg-foreground transition-colors over-hero:bg-white" />
         </button>
       </header>
 

@@ -1,34 +1,29 @@
 "use client";
-import type { StaticImageData } from "next/image";
 import Video from "next-video";
 import type { Asset } from "next-video/dist/assets.js";
-import Instaplay from "player.style/instaplay/react";
-import { useState } from "react";
 
 interface VideoPlayerInnerProps {
   videoSrc: Asset | string;
-  posterSrc: StaticImageData | string;
+  /** Receives the media element: the controls live in VideoPlayer */
+  onMedia: (media: HTMLVideoElement | null) => void;
 }
 
-export default function VideoPlayerInner({ videoSrc, posterSrc }: VideoPlayerInnerProps) {
-  const [isLoading, setIsLoading] = useState(true);
-
+// The bare Mux video element, without a player theme: themed controls fought the page's touch
+// scrolling and couldn't be paused with a tap on phones.
+export default function VideoPlayerInner({ videoSrc, onMedia }: VideoPlayerInnerProps) {
   return (
     <Video
+      ref={onMedia}
       src={videoSrc}
-      theme={Instaplay}
-      poster={posterSrc}
+      controls={false}
+      playsInline
       preload="metadata"
-      onLoadedData={() => setIsLoading(false)}
-      onCanPlay={() => setIsLoading(false)}
       style={{
-        "--media-primary-color": "#ffffff",
-        "--media-secondary-color": "var(--primary)",
-        "--media-accent-color": "var(--primary)",
+        position: "absolute",
+        inset: 0,
         width: "100%",
         height: "100%",
-        opacity: isLoading ? 0 : 1,
-        transition: "opacity 0.3s ease-in-out",
+        "--media-object-fit": "cover",
       }}
     />
   );

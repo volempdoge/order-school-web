@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
-import { useEffect, Suspense } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
-import * as fbq from '@/lib/tracker';
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef } from "react";
+
+import * as fbq from "@/lib/tracker";
 
 function PixelTrackerInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    // Track page view on route change
+    // The initial PageView is sent by the pixel snippet in the layout
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     fbq.pageview();
   }, [pathname, searchParams]);
 

@@ -2,26 +2,22 @@ export const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
 
 declare global {
   interface Window {
-    fbq: any;
+    fbq?: (...args: unknown[]) => void;
+  }
+}
+
+// The pixel loads after hydration (or not at all without FB_PIXEL_ID / with an ad blocker),
+// so every call must tolerate a missing `fbq`.
+function track(...args: unknown[]): void {
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
+    window.fbq(...args);
   }
 }
 
 export const pageview = (): void => {
-  window.fbq('track', 'PageView');
+  track("track", "PageView");
 };
 
-export const event = (name: string, options: Record<string, any> = {}): void => {
-  window.fbq('track', name, options);
-};
-
-export const trackLead = (): void => {
-  window.fbq('track', 'Lead');
-};
-
-export const trackPurchase = (value: number, currency: string = 'USD'): void => {
-  window.fbq('track', 'Purchase', { value, currency });
-};
-
-export const trackAddToCart = (content: Record<string, any>): void => {
-  window.fbq('track', 'AddToCart', content);
+export const event = (name: string, options: Record<string, unknown> = {}): void => {
+  track("track", name, options);
 };

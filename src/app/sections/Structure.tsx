@@ -1,131 +1,67 @@
-"use client";
-
-import { AnimatedProps } from "@/types/motion";
-import { motion } from "framer-motion";
-
-import StructureCols from "@/components/sections/StructureCols";
-
 import Image from "next/image";
-import outline from "@/assets/outline.png";
-import col1 from "@/assets/col1.png";
-import col2 from "@/assets/col2.png";
-import col3 from "@/assets/col3.png";
 
-export default function Structure({ id }: AnimatedProps) {
+import col1 from "@/assets/col1.webp";
+import col2 from "@/assets/col2.webp";
+import col3 from "@/assets/col3.webp";
+import SectionHeading from "@/components/SectionHeading";
+import StructureCols from "@/components/sections/StructureCols";
+import { structure } from "@/content/site";
+
+const columns = [
+  { ...structure[0], image: col1, alt: "Гравюра капітелі доричної колони — ілюстрація до заняття «Теорія»" },
+  {
+    ...structure[1],
+    image: col2,
+    alt: "Гравюра капітелі іонічної колони — ілюстрація до заняття «Практика»",
+  },
+  {
+    ...structure[2],
+    image: col3,
+    alt: "Гравюра капітелі коринфської колони — ілюстрація до заняття «Досвід»",
+  },
+];
+
+export default function Structure({ id }: { id?: string }) {
   return (
-    <section className="w-full min-h-screen py-20 overflow-x-hidden" id={id}>
-      <div className="max-w-4xl mx-auto text-foreground px-4">
-        <motion.h2
-          className="text-2xl md:text-4xl tracking-wider uppercase font-sans text-center"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          Cтруктура курсу
-        </motion.h2>
+    <section className="w-full overflow-x-hidden py-12 md:py-20" id={id}>
+      <div className="mx-auto max-w-4xl px-6">
+        <div data-reveal="up">
+          <SectionHeading>Структура курсу</SectionHeading>
+        </div>
 
-        <motion.div
-          className="my-4 md:my-6 flex justify-center"
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <Image src={outline} alt="" role="presentation" />
-        </motion.div>
-
-        <motion.p
-          className="text-lg font-mono font-medium text-justify mt-8"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          Річна програма гуртка поділена на модулі відповідно до кожної теми.
-          Кожен навчальний модуль триває 2 тижні і складається з трьох логічно
-          пов'язаних занять: Теорія, Практика та Досвід.
-        </motion.p>
+        <p data-reveal="up" className="mt-8 text-justify type-lead hyphens-auto">
+          Річну програму гуртка поділено на тематичні модулі. Кожен навчальний модуль триває 2 тижні і
+          складається з трьох логічно повʼязаних занять: «Теорія», «Практика» та «Досвід».
+        </p>
       </div>
 
-      <motion.div
-        className="mt-16"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={{
-          visible: {
-            transition: { staggerChildren: 0.2 }
-          },
-        }}
-      >
-        <div className="w-full flex justify-center px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-24 md:gap-8 lg:gap-12 xl:gap-16 items-end max-w-7xl">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex flex-col h-full"
+      <div className="mt-16 flex w-full justify-center px-6">
+        <div className="grid max-w-7xl grid-cols-1 items-end gap-16 md:grid-cols-2 md:gap-8 lg:grid-cols-3 lg:gap-12 xl:gap-16">
+          {columns.map((item, index) => (
+            <div
+              key={item.title}
+              data-reveal="up"
+              style={{ "--reveal-delay": `${index * 0.1}s` } as React.CSSProperties}
+              className="flex h-full flex-col"
             >
               <StructureCols
-                header="1. Теорія"
-                paragph1="Заняття відкриває тему модуля, дає теоретичну основу та ключові поняття, необхідні для подальшої роботи. Викладач окреслює актуальні дискусії, презентує концептуальні рамки й показує приклади з політичної практики."
-                paragph2="— на засвоєнні теоретичної основи та ключових понять через аналіз дискусій і прикладів із політичної практики."
+                header={`${index + 1}. ${item.title}`}
+                paragph1={item.text}
+                paragph2={`— ${item.focus}`}
                 span="Акцент"
               />
-              <div className="mt-auto pt-8 w-full flex justify-center items-end">
+              <div className="mt-auto flex w-full items-end justify-center pt-8">
                 <Image
-                  src={col1}
-                  alt="Теорія: вивчення політичних наук"
-                  className="w-full max-w-sm md:max-w-md lg:max-w-full h-auto object-contain object-bottom"
+                  src={item.image}
+                  alt={item.alt}
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  className="h-auto w-full max-w-sm object-contain object-bottom md:max-w-md lg:max-w-full"
                 />
               </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="flex flex-col h-full"
-            >
-              <StructureCols
-                header="2. Практика"
-                paragph1="Заняття спрямоване на застосування отриманих знань у практичних форматах. Симуляції, ігри, моделювання кейсів та розробка політик на основі пройдених тем, а також дебати – це інструменти ефективного засвоєння усіх матеріалів."
-                paragph2="— на розвитку аналітичних і комунікаційних навичок через активне залучення."
-                span="Акцент"
-              />
-              <div className="mt-auto pt-8 w-full flex justify-center items-end">
-                <Image
-                  src={col2}
-                  alt="Практика: симуляції та дебати"
-                  className="w-full max-w-sm md:max-w-md lg:max-w-full h-auto object-contain object-bottom"
-                />
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col h-full"
-            >
-              <StructureCols
-                header="3. Досвід"
-                paragph1="Заняття на якому учні можуть творчо розвинути власні інтереси в межах теми. Окрім можливості запропонувати власну активність, ми будемо відвідувати державні інституції, посольства, слухати запрошених експертів, а також такі активності як: ігри, творчі завдання, презентації, кіноклуби."
-                paragph2="— на творчій самореалізації та розширенні досвіду учнів через власні ініціативи, зовнішні візити й різноманітні активності."
-                span="Акцент"
-              />
-              <div className="mt-auto pt-8 w-full flex justify-center items-end">
-                <Image
-                  src={col3}
-                  alt="Досвід: зустрічі та екскурсії"
-                  className="w-full max-w-sm md:max-w-md lg:max-w-full h-auto object-contain object-bottom"
-                />
-              </div>
-            </motion.div>
-          </div>
+            </div>
+          ))}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

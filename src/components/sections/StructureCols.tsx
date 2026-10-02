@@ -1,21 +1,13 @@
-import Image from "next/image";
 import type { StructureColsProps } from "@/types";
 
-export default function StructureCols({
-  paragph1,
-  paragph2,
-  span,
-  header,
-}: StructureColsProps) {
+export default function StructureCols({ paragph1, paragph2, span, header }: StructureColsProps) {
   return (
     <div className="max-w-96">
-      <h3 className="uppercase font-mono font-bold text-2xl tracking-wide">
-        {header}
-      </h3>
-      <div className="text-base text-justify font-mono font-medium mt-2">
-        {paragph1}
+      <h3 className="type-h3 max-md:text-[1.375rem]">{header}</h3>
+      <div className="mt-3 text-justify type-body hyphens-auto">
+        <p>{paragph1}</p>
         <p className="mt-4">
-          <span className="text-primary font-bold">{span} </span>
+          <span className="font-bold text-primary">{span} </span>
           {paragph2}
         </p>
       </div>

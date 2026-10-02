@@ -47,3 +47,10 @@ videos/*
 !videos/*.js
 !videos/*.ts
 public/_next-video
+
+# lighthouse ci
+/.lighthouseci/
+
+# playwright
+/playwright-report/
+/test-results/

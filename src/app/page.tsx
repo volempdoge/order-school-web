@@ -92,7 +92,7 @@ function jsonLd(modules: TimelineModule[]) {
 }
 
 export default async function Home() {
-  const { modules, unavailable } = await getTimeline();
+  const { modules } = await getTimeline();
 
   return (
     <main className="min-h-screen overflow-x-hidden">
@@ -105,7 +105,7 @@ export default async function Home() {
       <AboutCourse />
       <Knowlege id="knowledge" />
       <Structure id="structure" />
-      <Timeline id="timeline" modules={modules} unavailable={unavailable} />
+      <Timeline id="timeline" modules={modules} />
       <Audience id="audience" />
       <Teachers id="teachers" />
       <Videos id="interview" />

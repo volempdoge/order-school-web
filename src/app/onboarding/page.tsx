@@ -1,4 +1,5 @@
 import { pageMetadata } from "@/lib/metadata";
+import { getTimeline, hasOpenModules } from "@/lib/modules";
 
 import OnboardingForm from "./OnboardingForm";
 
@@ -9,10 +10,14 @@ export const metadata = pageMetadata({
   path: "/onboarding",
 });
 
-export default function OnboardingPage() {
+// Same schedule as the home page: while nothing is running or announced, the form is a pre-registration
+export const revalidate = 60;
+
+export default async function OnboardingPage() {
+  const { modules } = await getTimeline();
   return (
     <main>
-      <OnboardingForm />
+      <OnboardingForm preRegistration={!hasOpenModules(modules)} />
     </main>
   );
 }

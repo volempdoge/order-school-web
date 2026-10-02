@@ -55,16 +55,16 @@ export default function Teachers({ id }: { id?: string }) {
       <div data-reveal="up" className="mx-auto mb-12 max-w-6xl px-6 md:mb-16">
         <SectionHeading>Викладачі</SectionHeading>
       </div>
-      {/* Phones: a swipeable row that peeks the next card, like the interviews. From md: three columns */}
+      {/* Phones: a swipeable row that peeks the next card, like the interviews. From md: three columns.
+          The row reveals as a whole: cards off to the side never scroll into view, so they would stay
+          shifted down and could be scrolled vertically inside the row. */}
       <div className="mx-auto max-w-5xl md:px-6">
-        <div className="flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto overscroll-x-contain px-6 pb-2 [scrollbar-width:none] md:grid md:auto-rows-[minmax(0,1fr)] md:grid-cols-3 md:gap-x-12 md:overflow-visible md:px-0 md:pb-0">
-          {cards.map((teacher, index) => (
-            <div
-              key={teacher.name}
-              data-reveal="up"
-              style={{ "--reveal-delay": `${index * 0.15}s` } as React.CSSProperties}
-              className="w-[80vw] max-w-sm shrink-0 snap-start md:w-auto md:max-w-none"
-            >
+        <div
+          data-reveal="up"
+          className="flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto overflow-y-hidden overscroll-x-contain px-6 pb-2 [scrollbar-width:none] md:grid md:auto-rows-[minmax(0,1fr)] md:grid-cols-3 md:gap-x-12 md:overflow-visible md:overflow-y-visible md:px-0 md:pb-0"
+        >
+          {cards.map((teacher) => (
+            <div key={teacher.name} className="w-[80vw] max-w-sm shrink-0 snap-start md:w-auto md:max-w-none">
               <TeacherCard teacher={teacher} photo={teacher.photo} />
             </div>
           ))}

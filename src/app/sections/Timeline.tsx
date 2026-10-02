@@ -1,10 +1,11 @@
 import Link from "next/link";
 
 import SectionHeading from "@/components/SectionHeading";
+import SocialLinks from "@/components/SocialLinks";
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
-import { site } from "@/content/site";
-import { kyivISODate, type ModuleStatus, type TimelineModule } from "@/lib/modules";
+import { courseAnnouncement } from "@/content/site";
+import { hasOpenModules, kyivISODate, type ModuleStatus, type TimelineModule } from "@/lib/modules";
 
 const badgeBase =
   "font-body font-bold uppercase text-xs px-2 py-0.5 rounded-sm tracking-wider border border-primary";
@@ -21,16 +22,45 @@ function StatusBadge({ status }: { status: ModuleStatus }) {
   return <span className={badge.className}>{badge.text}</span>;
 }
 
-export default function Timeline({
-  id = "timeline",
-  modules,
-  unavailable = false,
-}: {
-  id?: string;
-  modules: TimelineModule[];
-  /** Notion could not be reached */
-  unavailable?: boolean;
-}) {
+// Nothing running or announced (or Notion is unreachable): invite to pre-register instead of a schedule
+function CourseAnnouncement() {
+  return (
+    <div
+      data-reveal="up"
+      className="mx-auto mt-12 max-w-4xl rounded-lg bg-primary px-6 py-8 text-white md:mt-16 md:px-12 md:py-10"
+    >
+      <div className="space-y-4 font-body text-[1.1875rem] leading-snug font-bold md:text-xl">
+        <p>{courseAnnouncement.lead}</p>
+        <p>{courseAnnouncement.text}</p>
+      </div>
+      <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        {/* The label is long: on phones it wraps instead of running out of the button */}
+        <Button
+          asChild
+          variant="light"
+          size="lg"
+          className="h-auto min-h-14 w-full py-3 text-center leading-tight text-balance whitespace-normal sm:w-auto sm:whitespace-nowrap"
+        >
+          <Link href="/onboarding">{courseAnnouncement.cta}</Link>
+        </Button>
+        <SocialLinks className="flex justify-center gap-4 text-white" />
+      </div>
+    </div>
+  );
+}
+
+export default function Timeline({ id = "timeline", modules }: { id?: string; modules: TimelineModule[] }) {
+  if (!hasOpenModules(modules)) {
+    return (
+      <section id={id} className="relative w-full px-6 py-12 md:py-20">
+        <div data-reveal="up" className="mx-auto max-w-6xl text-center">
+          <SectionHeading>Навчальні модулі</SectionHeading>
+        </div>
+        <CourseAnnouncement />
+      </section>
+    );
+  }
+
   // The active (or the nearest upcoming) module is expanded by default
   const openId = modules.find((m) => m.status === "триває" || m.status === "незабаром початок")?.id;
 
@@ -42,34 +72,6 @@ export default function Timeline({
       </div>
 
       <div className="mx-auto my-12 max-w-7xl px-6 md:my-16 md:px-8">
-        {unavailable && (
-          <div
-            role="status"
-            className="mb-6 rounded-lg border-2 border-dashed border-primary bg-card px-6 py-5 type-body"
-          >
-            <p className="font-bold">Розклад модулів тимчасово не завантажився.</p>
-            <p className="mt-2">
-              Напишіть нам у{" "}
-              <a
-                href={site.telegram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold text-primary underline underline-offset-2"
-              >
-                Telegram
-              </a>{" "}
-              або на{" "}
-              <a
-                href={`mailto:${site.email}`}
-                className="font-bold text-primary underline underline-offset-2"
-              >
-                {site.email}
-              </a>{" "}
-              — розповімо про найближчі модулі та дати.
-            </p>
-          </div>
-        )}
-
         {modules.map((module) => (
           <Disclosure
             key={module.id}

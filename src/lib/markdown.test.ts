@@ -48,7 +48,9 @@ describe("index.md", () => {
     expect(md).toContain("Опис");
   });
 
-  it("falls back to a placeholder when Notion is unavailable", () => {
-    expect(homeMarkdown([])).toContain("Розклад модулів уточнюється.");
+  it("announces upcoming courses when nothing is scheduled or Notion is unavailable", () => {
+    const md = homeMarkdown([]);
+    expect(md).toContain("Нові річні курси в розробці");
+    expect(md).not.toContain("Інші модулі у розробці");
   });
 });

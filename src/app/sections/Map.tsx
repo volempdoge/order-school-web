@@ -6,11 +6,11 @@ import { site } from "@/content/site";
 export default function Map() {
   return (
     <section className="relative w-full md:h-[50vh]" aria-label="Як нас знайти">
-      {/* Phones: a preview only — a swipe over it scrolls the page, the button opens the Maps app.
-          From md the map is interactive. */}
+      {/* Interactive everywhere. On phones Google's embed pans with two fingers, so a one-finger swipe
+          still scrolls the page; the button below opens the Maps app. */}
       <iframe
         title="Київська школа економіки на Google Maps"
-        className="pointer-events-none block h-64 w-full md:pointer-events-auto md:h-full"
+        className="block h-80 w-full md:h-full"
         style={{ border: 0 }}
         allowFullScreen
         loading="lazy"

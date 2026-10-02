@@ -28,6 +28,11 @@ export default function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/gallery" className="underline-offset-4 hover:text-white hover:underline">
+                Галерея
+              </Link>
+            </li>
           </ul>
         </nav>
 

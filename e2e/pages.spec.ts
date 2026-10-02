@@ -31,11 +31,21 @@ test("unknown pages get the 404 page", async ({ page }) => {
   for (const value of robots) expect(value).toMatch(/noindex/);
 });
 
-test("the module schedule falls back to contacts when Notion is unavailable", async ({ page }) => {
-  // E2E runs without Notion credentials, so the fallback must be there
+test("without a schedule the site invites to pre-register for upcoming courses", async ({ page }) => {
+  // E2E runs without Notion credentials, so there is no schedule
   test.skip(Boolean(process.env.NOTION_API_KEY), "Notion is configured");
   await page.goto("/#timeline");
-  const fallback = page.getByRole("status").filter({ hasText: "Розклад модулів тимчасово не завантажився" });
-  await expect(fallback).toBeVisible();
-  await expect(fallback.getByRole("link", { name: "Telegram" })).toBeVisible();
+  const timeline = page.locator("#timeline");
+  await expect(timeline.getByText("Нові річні курси в розробці")).toBeVisible();
+  await timeline.getByRole("link", { name: "Хочу на майбутній курс" }).click();
+
+  await expect(page).toHaveURL(/\/onboarding$/);
+  await expect(page.getByText("Це попередній запис")).toBeVisible();
+});
+
+test("the gallery page renders, with a placeholder while it has no content", async ({ page }) => {
+  test.skip(Boolean(process.env.NOTION_GALLERY_DATABASE_ID), "The gallery is configured");
+  await page.goto("/gallery");
+  await expect(page.getByRole("heading", { level: 1, name: "Галерея" })).toBeVisible();
+  await expect(page.getByText("Скоро тут зʼявляться фото й відео")).toBeVisible();
 });

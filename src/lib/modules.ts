@@ -186,6 +186,11 @@ export function buildTimeline(rawModules: ModuleRaw[], now: Date = new Date()): 
   });
 }
 
+/** A module is running or coming up. Otherwise the site announces upcoming courses instead of a schedule. */
+export function hasOpenModules(modules: TimelineModule[]): boolean {
+  return modules.some((module) => module.status !== null);
+}
+
 export interface Timeline {
   modules: TimelineModule[];
   /** Notion could not be reached: show a fallback instead of an empty list */

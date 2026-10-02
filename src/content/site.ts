@@ -41,6 +41,16 @@ export const navLinks = [
   { href: "#faq", text: "Запитання" },
 ] as const;
 
+// Shown instead of the module schedule while no module is running or announced,
+// and as the pre-registration notice on the form
+export const courseAnnouncement = {
+  lead: "Нові річні курси в розробці, слідкуйте за нашими соцмережами, щоб не пропустити анонс.",
+  text: "Проте якщо хочете отримати повідомлення про старт курсу першими, ви вже можете зареєструватись, і ми звʼяжемося з вами.",
+  cta: "Хочу на майбутній курс",
+  formNotice:
+    "Це попередній запис: нові річні курси зараз у розробці. Залиште контакти — і ми повідомимо вас про старт першими.",
+} as const;
+
 export const knowledgeTopics = [
   "Основи політичної філософії та політики",
   "Політичні ідеології й типи режимів",

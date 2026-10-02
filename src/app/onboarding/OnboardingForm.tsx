@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { site } from "@/content/site";
+import { courseAnnouncement, site } from "@/content/site";
 import * as fbq from "@/lib/tracker";
 
 // Bump when the consent wording or the privacy policy changes
@@ -109,7 +109,7 @@ function ConsentCheckbox({
   );
 }
 
-export default function OnboardingForm() {
+export default function OnboardingForm({ preRegistration = false }: { preRegistration?: boolean }) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
   const [submitError, setSubmitError] = React.useState(false);
@@ -173,6 +173,11 @@ export default function OnboardingForm() {
     <>
       <section className="flex min-h-screen items-center justify-center p-4 pb-16">
         <div className="mt-24 w-full max-w-2xl rounded-lg bg-card p-6 shadow-xl md:mt-32 md:p-12">
+          {preRegistration && (
+            <p className="mb-8 rounded-md border-2 border-primary bg-background px-5 py-4 type-body font-bold">
+              {courseAnnouncement.formNotice}
+            </p>
+          )}
           <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             <FieldSet>
               <FieldGroup>

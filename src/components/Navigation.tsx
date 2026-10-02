@@ -213,7 +213,7 @@ export function Navigation() {
             </div>
 
             <nav className="flex flex-shrink-0 flex-col">
-              {navLinks.map((link, index) => (
+              {navLinks.map((link) => (
                 <React.Fragment key={link.href}>
                   <Link
                     href={sectionHref(link.href)}
@@ -222,9 +222,16 @@ export function Navigation() {
                   >
                     {link.text}
                   </Link>
-                  {index < navLinks.length - 1 && <div className="mx-3 h-px bg-white/30" />}
+                  <div className="mx-3 h-px bg-white/30" />
                 </React.Fragment>
               ))}
+              <Link
+                href="/gallery"
+                onClick={closeMenu}
+                className="px-6 py-4 text-xl font-bold tracking-wide text-white uppercase transition-colors hover:bg-white/10"
+              >
+                Галерея
+              </Link>
             </nav>
 
             <div className="mt-auto flex-shrink-0 space-y-4 px-6 pt-4 pb-6">

@@ -17,7 +17,12 @@ describe("robots.txt", () => {
 describe("sitemap.xml", () => {
   it("lists every public page with absolute URLs", () => {
     const urls = sitemap().map((entry) => entry.url);
-    expect(urls).toEqual([`${SITE_URL}/`, `${SITE_URL}/onboarding`, `${SITE_URL}/privacy`]);
+    expect(urls).toEqual([
+      `${SITE_URL}/`,
+      `${SITE_URL}/onboarding`,
+      `${SITE_URL}/gallery`,
+      `${SITE_URL}/privacy`,
+    ]);
   });
 });
 

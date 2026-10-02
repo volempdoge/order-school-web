@@ -34,12 +34,13 @@ function CourseAnnouncement() {
         <p>{courseAnnouncement.text}</p>
       </div>
       <div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-        {/* The label is long: on phones it wraps instead of running out of the button */}
+        {/* The label is long: on phones it wraps instead of running out of the button.
+            The white border keeps it visible on the red card when hovered (it turns red too). */}
         <Button
           asChild
           variant="light"
           size="lg"
-          className="h-auto min-h-14 w-full py-3 text-center leading-tight text-balance whitespace-normal sm:w-auto sm:whitespace-nowrap"
+          className="h-auto min-h-14 w-full border-2 border-white py-3 text-center leading-tight text-balance whitespace-normal sm:w-auto sm:whitespace-nowrap"
         >
           <Link href="/onboarding">{courseAnnouncement.cta}</Link>
         </Button>

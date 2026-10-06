@@ -1,88 +1,26 @@
-"use client"
+import SectionHeading from "@/components/SectionHeading";
+import { Disclosure } from "@/components/ui/disclosure";
+import { faq } from "@/content/site";
 
-import { motion } from "framer-motion";
-
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-export default function Faq() {
+export default function Faq({ id }: { id?: string }) {
   return (
-    <section className="relative w-full min-h-screen">
-      <motion.div
-        className="max-w-6xl mx-auto text-center text-foreground px-4"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.2 }}
-        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-      >
-        <h2 className="text-2xl md:text-4xl tracking-wider uppercase font-sans mb-2">
-          Відповіді на поширені запитання
-        </h2>
-        <div className="my-6 mx-auto max-w-36 md:max-w-xl h-1 bg-primary rounded-full"></div>
-      </motion.div>
+    <section id={id} className="relative w-full py-12 md:py-20">
+      <div data-reveal="up" className="mx-auto max-w-6xl px-6">
+        <SectionHeading>Відповіді на поширені запитання</SectionHeading>
+      </div>
 
-      <div className="max-w-7xl mx-auto font-mono my-16 px-4 sm:px-0">
-        <Accordion type="single" collapsible>
-          {[
-            {
-              q: "Хто може взяти участь?",
-              a: "Гурток відкритий для учнів 8–11 класів. Не потрібно спеціальної підготовки — достатньо цікавитися тим, як влаштований світ.",
-            },
-            {
-              q: "Чи потрібні знання з політології, щоб почати?",
-              a: "Ні, спеціальних знань не потрібно. Ми починаємо з базових понять і поступово занурюємось у складніші теми. Достатньо цікавитися тим, як працює політика й суспільство.",
-            },
-            {
-              q: "Чи можу я записатись лише на один модуль?",
-              a: "Так. Ви можете обрати і записатись на ті модулі які вас цікавлять. Але ми радимо пройти річний курс повністю, щоб отримати найбільше досвіду і знань. ",
-            },
-            {
-              q: "Як відбуваються заняття?",
-              a: "Навчання проходить офлайн у головному кампусі KSE і у наших партнерів. Польові заняття можуть відбуватись як на вулиці так і у різних інституціях: посольства, суди, верховна рада. Кожен модуль складається з трьох занять типових форматів: теорія, практика та досвід.",
-            },
-            {
-              q: "Чи будуть записи занять?",
-              a: "Так. Заняття на яких читається лекція будуть записані і додані до метеріалів курсу.",
-            },
-            {
-              q: "Скільки часу займає навчання?",
-              a: "Одне заняття триває 2 години. Підготовка до заняття буде займати орієнтовно 2-3 години. Курс триває протягом навчального року, але можна приєднатися з будь-якого модуля.",
-            },
-            {
-              q: "Чи можна поєднувати з навчанням у школі?",
-              a: "Так. Ми спеціально розробили формат, який зручний для школярів — зустрічі ввечері або у вихідні.",
-            },
-            {
-              q: "Чи буде можливість ставити питання поза заняттями?",
-              a: "Так. Учасники гуртка матимуть спільний чат, де можна обговорювати теми курсу, ставити питання лекторам та обмінюватися думками з іншими учнями. Викладачі завжди відкриті для зворотного зв’язку.",
-            },
-            {
-              q: "Чи можна отримати сертифікат?",
-              a: "Так, після завершення навчання, за умови проходження 12 модулів, учні отримують сертифікат Київської школи економіки.",
-            },
-            {
-              q: "Як зареєструватися?",
-              a: "Натисни кнопку «Хочу на курс» і заповни коротку форму. Після цього ми звʼяжемось з вами у телеграмі або через пошту, щоб уточнити усі деталі. Заповнення контактної форми не гарантує що вас візьмуть на гурток.",
-            },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.1 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-            >
-              <AccordionItem value={`item-${i + 1}`}>
-                <AccordionTrigger>{item.q}</AccordionTrigger>
-                <AccordionContent>{item.a}</AccordionContent>
-              </AccordionItem>
-            </motion.div>
-          ))}
-        </Accordion>
+      <div className="mx-auto my-12 max-w-7xl px-6 md:my-16 md:px-8">
+        {faq.map((item, i) => (
+          <Disclosure
+            key={item.q}
+            name="faq"
+            data-reveal="up"
+            style={{ "--reveal-delay": `${Math.min(i, 5) * 0.05}s` } as React.CSSProperties}
+            summary={<h3>{item.q}</h3>}
+          >
+            <p>{item.a}</p>
+          </Disclosure>
+        ))}
       </div>
     </section>
   );

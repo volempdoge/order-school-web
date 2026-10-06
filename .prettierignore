@@ -1,0 +1,4 @@
+# Prettier also skips everything in .gitignore.
+# Lockfile and next-video manifests are written by tools.
+package-lock.json
+videos

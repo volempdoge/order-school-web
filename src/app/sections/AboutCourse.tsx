@@ -1,258 +1,77 @@
-"use client";
+import Link from "next/link";
 
-import { motion, useAnimation, easeOut, Variants } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import kse_building from "@/assets/kse-building.png";
+import kse_building from "@/assets/kse-building.webp";
 import kse_building_mobile from "@/assets/kse-building-mobile.png";
+import ArtDirectedImage from "@/components/ArtDirectedImage";
+import SectionHeading from "@/components/SectionHeading";
+import { Button } from "@/components/ui/button";
 
-// --- Constants & Variants ---
-
-const FADE_UP: Variants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: easeOut } },
-};
-
-const FADE_RIGHT: Variants = {
-  hidden: { opacity: 0, x: 100 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: easeOut } },
-};
-
-// --- Hooks ---
-
-function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const checkSize = () => setIsDesktop(window.innerWidth >= 768);
-    checkSize();
-    window.addEventListener("resize", checkSize);
-    return () => window.removeEventListener("resize", checkSize);
-  }, []);
-
-  return isDesktop;
-}
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return isMobile;
-}
-
-// --- Sub-Components ---
-
-function AboutCourseMobile() {
-  const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (inView) controls.start("visible");
-    else controls.start("hidden");
-  }, [controls, inView]);
-
-  return (
-    <section
-      id="about"
-      ref={ref}
-      className="relative w-full min-h-screen h-auto flex flex-col pt-24 pb-0 overflow-hidden font-mono font-medium"
-    >
-      <div className="w-full px-6 flex flex-col h-full flex-grow z-20">
-        <motion.div
-          variants={FADE_UP}
-          initial="hidden"
-          animate={controls}
-          className="mb-6"
-        >
-          {/* SEO Fix: Demoted h1 to h2 to avoid multiple h1 tags on page */}
-          <h2 className="text-[20px] leading-[34px] md:text-[46px] md:leading-[54px] uppercase font-black font-mono text-black">
-            Чому варто обрати київський гурток{" "}
-            <span className="text-[#F42B39]">політичних</span> студій?
-          </h2>
-        </motion.div>
-
-        <motion.div
-          variants={FADE_UP}
-          initial="hidden"
-          animate={controls}
-          transition={{ delay: 0.2 }}
-          className="mb-8"
-        >
-          <div className="font-medium text-[15px] leading-[22px] text-black text-justify space-y-4">
-            <p>
-              Це практичний курс від факультету соціальних наук{" "}
-              <span className="text-[#F42B39] font-bold">KSE</span> для{" "}
-              <span className="text-[#F42B39] font-bold">
-                учнів 8–11 класів
-              </span>
-              , які хочуть глибше зрозуміти політику та суспільство. Навчання
-              відбувається офлайн у головному кампусі університету. Тут ви
-              ознайомитеся з основами{" "}
-              <span className="text-[#F42B39] font-bold">
-                політичних наук і політичної філософії
-              </span>
-              , вивчите історію політичних ідей та їхній вплив на сучасність.
-              Ви отримаєте інструменти, які допоможуть розуміти політичні
-              процеси та впливати на зміни у суспільстві.
-            </p>
-            <p>
-              Без зайвих спрощень, казуальності і поверхневості. Лише
-              поглиблене вивчення першоджерел і літератури, практичні кейси та
-              власні дослідження.
-            </p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          variants={FADE_UP}
-          initial="hidden"
-          animate={controls}
-          transition={{ delay: 0.4 }}
-          className="mb-6 flex justify-start"
-        >
-          <a href="/onboarding" className="w-full">
-            <Button className="bg-[#F42B39] text-white py-6 px-6 text-[14px] uppercase font-medium font-mono tracking-wide hover:bg-[#d12432] rounded-[10px] shadow-md transition-colors">
-              Дізнатися більше
-            </Button>
-          </a>
-        </motion.div>
-      </div>
-      <motion.div
-        variants={FADE_UP}
-        initial="hidden"
-        animate={controls}
-        transition={{ delay: 0.6 }}
-        className="relative w-full aspect-[3/2] ml-5 -mt-25 z-10"
-      >
-        <Image
-          src={kse_building_mobile}
-          alt="KSE Building"
-          fill
-          sizes="100vw"
-          className="object-contain object-bottom drop-shadow-xl"
-        />
-      </motion.div>
-    </section>
-  );
-}
-
-function AboutCourseDesktop({ isDesktop }: { isDesktop: boolean }) {
-  const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (inView) controls.start("visible");
-    else controls.start("hidden");
-  }, [controls, inView]);
-
-  return (
-    <section
-      id="about"
-      ref={ref}
-      className="relative w-full min-h-screen flex items-start justify-start overflow-hidden pt-24 pb-12 md:py-0 md:items-center md:justify-center font-mono font-medium"
-    >
-      <div className="w-full max-w-[430px] md:max-w-none md:grid md:grid-cols-3 md:grid-rows-3 md:gap-4 px-6 md:px-0">
-        <motion.div
-          className="md:col-span-2 mb-6 md:mb-0"
-          variants={FADE_UP}
-          initial="hidden"
-          animate={controls}
-        >
-          <div className="max-w-6xl md:ml-16 md:mt-16 text-left text-black">
-            {/* SEO Fix: Demoted h1 to h2 */}
-            <h2 className="text-[28px] leading-[34px] md:text-[46px] md:leading-[54px] tracking-normal md:tracking-wider uppercase font-black font-mono text-black drop-shadow-[0_6px_6px_rgba(0,0,0,0.25)]">
-              Чому варто обрати Київський Гурток{" "}
-              <span className="text-[#F42B39]">Політичних</span> Студій?
-            </h2>
-          </div>
-        </motion.div>
-
-        {/* Removed dead code: isMobile check inside Desktop view */}
-
-        {/* Desktop Image */}
-        <motion.div
-          className="hidden md:flex md:row-span-3 md:col-start-3 items-end justify-end"
-          variants={FADE_RIGHT}
-          initial="hidden"
-          animate={controls}
-        >
-          <div className="relative w-full max-w-[760px] aspect-[3/4] lg:aspect-[4/5]">
-            <Image
-              src={kse_building}
-              alt="KSE building"
-              fill
-              sizes="(min-width: 1280px) 700px, (min-width: 1024px) 520px, 45vw"
-              className="object-cover md:object-contain lg:object-cover"
-            />
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="md:col-span-2 md:row-span-2 md:row-start-2 mb-6 md:mb-0"
-          variants={FADE_UP}
-          initial="hidden"
-          animate={controls}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="max-w-4xl md:ml-16 text-justify font-mono font-medium tracking-normal text-[15px] leading-[20px] md:text-base text-black">
-            <p>
-              Це практичний курс від факультету соціальних наук{" "}
-              <span className="text-primary font-bold">KSE</span> для{" "}
-              <span className="text-primary font-bold">
-                учнів 8–11 класів
-              </span>
-              , які хочуть глибше зрозуміти політику та суспільство. Навчання
-              відбувається офлайн у головному кампусі університету. Тут ви
-              ознайомитеся з основами{" "}
-              <span className="text-primary font-bold">
-                політичних наук і політичної філософії
-              </span>
-              , вивчите історію політичних ідей та їхній вплив на сучасність. Ви
-              отримаєте інструменти, які допоможуть розуміти політичні процеси
-              та впливати на зміни у суспільстві.
-            </p>
-            <p className="mt-5 md:mt-8">
-              Без зайвих спрощень, казуальності і поверхневості. Лише поглиблене
-              вивчення першоджерел і літератури, практичні кейси та власні
-              дослідження.
-            </p>
-            {isDesktop && (
-              <div className="mt-6 md:mt-16">
-                <h2 className="text-[17px] md:text-xl font-bold mb-4 text-black">
-                  Поспішай, кількість місць обмежена
-                </h2>
-                <a href="/onboarding">
-                  <Button className="bg-primary text-white mt-2 text-[17px] md:text-xl py-7 md:py-8 px-8 md:px-12 uppercase font-medium font-mono tracking-wide hover:bg-white hover:text-primary cursor-pointer w-full md:w-auto rounded-[20px] transition-colors">
-                    Дізнатися більше
-                  </Button>
-                </a>
-              </div>
-            )}
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// --- Main Component ---
+const accent = "text-primary font-bold";
 
 export default function AboutCourse() {
-  const isDesktop = useIsDesktop();
-  const isMobile = useIsMobile();
+  return (
+    <section
+      id="about"
+      className="relative flex w-full flex-col overflow-hidden pt-24 pb-0 lg:min-h-screen lg:items-center lg:justify-center lg:py-0"
+    >
+      {/* Two columns from lg only: on tablets the building would shrink into a corner */}
+      <div className="w-full px-6 md:px-8 lg:grid lg:grid-cols-3 lg:grid-rows-3 lg:gap-4 lg:px-0">
+        <div
+          data-reveal="up"
+          className="relative z-20 mb-6 lg:col-span-2 lg:mt-16 lg:mb-0 lg:ml-16 lg:max-w-4xl"
+        >
+          <SectionHeading align="left">
+            Чому варто обрати Гурток <span className="text-primary">політичних</span> студій KSE?
+          </SectionHeading>
+        </div>
 
-  if (isMobile) {
-    return <AboutCourseMobile />;
-  }
+        <div
+          data-reveal="up"
+          style={{ "--reveal-delay": "0.2s" } as React.CSSProperties}
+          className="relative z-20 lg:col-span-2 lg:row-span-2 lg:row-start-2 lg:ml-16"
+        >
+          <div className="space-y-4 text-justify type-body hyphens-auto md:max-w-4xl md:space-y-6">
+            <p>
+              Це практичний курс від факультету соціальних наук <span className={accent}>KSE</span> для{" "}
+              <span className={accent}>учнів 8–11 класів</span>, які хочуть глибше зрозуміти політику та
+              суспільство. Навчання відбувається офлайн у головному кампусі KSE та в наших партнерів. Тут ви
+              ознайомитеся з основами <span className={accent}>політичних наук і політичної філософії</span>,
+              вивчите історію політичних ідей та їхній вплив на сучасність. Ви отримаєте інструменти, які
+              допоможуть розуміти політичні процеси та впливати на зміни у суспільстві.
+            </p>
+            <p>
+              Без зайвих спрощень, легковажності й поверхневості. Лише поглиблене вивчення першоджерел і
+              літератури, практичні кейси та власні дослідження.
+            </p>
+          </div>
 
-  // Optimized: Removed isMobile prop as it was not used meaningfully in Desktop view
-  return <AboutCourseDesktop isDesktop={isDesktop} />;
+          <div className="mt-8 mb-8 md:mt-10 lg:mt-12 lg:mb-0">
+            <p className="mb-4 type-lead font-bold">Поспішайте, кількість місць обмежена</p>
+            <Button asChild size="lg" className="w-full sm:w-auto">
+              <Link href="/onboarding">Дізнатися більше</Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* Phones: the wide crop under the text. Tablets: the full art, right-aligned. Desktop: the right column */}
+        <div
+          data-reveal="up-md-right"
+          style={{ "--reveal-delay": "0.3s" } as React.CSSProperties}
+          className="relative z-10 -mr-11 -ml-1 md:-mr-8 md:ml-auto md:max-w-[560px] lg:col-start-3 lg:row-span-3 lg:row-start-1 lg:m-0 lg:flex lg:max-w-none lg:items-end lg:justify-end"
+        >
+          <div className="relative aspect-3/2 w-full md:aspect-square lg:aspect-4/5 lg:max-w-[760px]">
+            <ArtDirectedImage
+              mobile={kse_building_mobile}
+              desktop={kse_building}
+              alt="Будівля головного кампусу Київської школи економіки"
+              fill
+              sizes="100vw"
+              desktopSizes="(min-width: 1280px) 700px, (min-width: 1024px) 520px, 560px"
+              className="object-contain object-bottom drop-shadow-xl md:object-center md:drop-shadow-none lg:object-cover"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

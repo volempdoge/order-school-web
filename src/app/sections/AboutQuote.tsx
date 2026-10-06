@@ -1,57 +1,29 @@
-"use client";
-
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
 
-import quote from "@/assets/quote.png";
+import quote from "@/assets/quote.webp";
 
 export default function AboutQuote() {
-  const sectionRef = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  const textX = useTransform(scrollYProgress, [0, 0.5], [-100, 0]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.3, 0.5], [0, 0.5, 1]);
-
-  const imageX = useTransform(scrollYProgress, [0, 0.5], [100, 0]);
-  const imageOpacity = useTransform(scrollYProgress, [0, 0.3, 0.5], [0, 0.5, 1]);
-  const imageRotate = useTransform(scrollYProgress, [0, 0.5], [15, 0]);
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full mt-12 md:mt-20 flex items-center justify-center px-0 md:px-0"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-[4fr_1fr] md:grid-rows-1 gap-4 md:gap-1 w-full max-w-[1800px] items-center">
-        <motion.div
-          className="flex items-center justify-center"
-          style={{
-            x: textX,
-            opacity: textOpacity
-          }}
-        >
-          <div className="w-full border-3 border-l-0 md:border-l-0 py-6 md:py-10 px-4 md:px-16 rounded-r-4xl border-primary mr-2">
-            <div className="font-sans normal-case md:normal-case font-bold text-base md:text-3xl md:leading-snug tracking-wide md:tracking-normal">
-              "Демократія має народжуватися у кожному новому поколінні, і саме освіта допомагає їй з'явитися на світ." — Джон Дьюї
-            </div>
+    <section className="relative mt-12 flex w-full items-center justify-center md:mt-20">
+      <div className="grid w-full max-w-[1800px] grid-cols-1 items-center gap-4 md:grid-cols-[4fr_1fr] md:gap-1">
+        <div data-reveal="left" className="flex items-center justify-center">
+          <figure className="mr-2 w-full rounded-r-lg border-3 border-l-0 border-primary px-6 py-6 md:px-16 md:py-10">
+            <blockquote className="type-quote">
+              «Демократія має народжуватися у кожному новому поколінні, і саме освіта допомагає їй зʼявитися
+              на світ.» — <cite className="not-italic">Джон Дьюї</cite>
+            </blockquote>
+          </figure>
+        </div>
+        <div data-reveal="right-rotate" className="hidden justify-start md:flex">
+          <div className="w-full max-w-sm flex-shrink-0">
+            <Image
+              src={quote}
+              alt="Портрет американського філософа й педагога Джона Дьюї"
+              sizes="384px"
+              className="h-auto w-full"
+            />
           </div>
-        </motion.div>
-        <motion.div
-          className="hidden md:flex justify-end md:justify-start"
-          style={{
-            x: imageX,
-            opacity: imageOpacity,
-            rotate: imageRotate
-          }}
-        >
-          <div className="w-32 md:w-full md:max-w-sm flex-shrink-0">
-            <Image src={quote} alt="John Dewey" className="w-full h-auto" />
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

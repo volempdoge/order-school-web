@@ -1,119 +1,73 @@
-"use client"
-import { Suspense } from 'react';
-import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-import Script from "next/script";
-
-import { Navigation } from "@/components/Navigation";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import Script from "next/script";
 
+import Footer from "@/components/Footer";
+import { Navigation } from "@/components/Navigation";
+import PixelTracker from "@/components/PixelTracker";
+import RevealObserver from "@/components/RevealObserver";
+import { site, SITE_URL } from "@/content/site";
+import { pageMetadata } from "@/lib/metadata";
 import { FB_PIXEL_ID } from "@/lib/tracker";
 
-import PixelTracker from '@/components/PixelTracker';
-
+// WOFF2, subset to Latin + Cyrillic (see src/app/fonts/README.md). Only the weights in use.
 const gothamPro = localFont({
   src: [
-    {
-      path: "/fonts/GothamPro/GothamProBlack/GothamProBlack.woff",
-      weight: "900",
-      style: "normal",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProBlackItalic/GothamProBlackItalic.woff",
-      weight: "900",
-      style: "italic",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProBold/GothamProBold.woff",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProBoldItalic/GothamProBoldItalic.woff",
-      weight: "700",
-      style: "italic",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProMedium/GothamProMedium.woff",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProMediumItalic/GothamProMediumItalic.woff",
-      weight: "500",
-      style: "italic",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProRegular/GothamProRegular.woff",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProItalic/GothamProItalic.woff",
-      weight: "400",
-      style: "italic",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProLight/GothamProLight.woff",
-      weight: "300",
-      style: "normal",
-    },
-    {
-      path: "/fonts/GothamPro/GothamProLightItalic/GothamProLightItalic.woff",
-      weight: "300",
-      style: "italic",
-    },
+    { path: "./fonts/gotham-pro-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/gotham-pro-700.woff2", weight: "700", style: "normal" },
   ],
   variable: "--font-gotham-pro",
   display: "swap",
 });
 
+// A single face (weight 600). Declaring the full range stops browsers from
+// synthesizing a fake bold when a heading asks for font-bold.
 const grotesk = localFont({
-  src: "/fonts/cy-grotesk/cy-grotesk-wide.ttf",
+  src: [{ path: "./fonts/cy-grotesk-wide.woff2", weight: "100 900", style: "normal" }],
   display: "swap",
   variable: "--font-grotesk",
 });
 
-const metadata: Metadata = {
-  metadataBase: new URL("https://www.orderschool.online"),
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  ...pageMetadata({ description: site.description, path: "/" }),
   title: {
-    default: "Гурток політології | Київська школа економіки",
-    template: "%s | Гурток політології",
+    default: site.title,
+    template: `%s | ${site.name}`,
   },
-  description:
-    "Гурток Політології у Київській школі економіки ─ офлайн-курси для учнів 8-11 класів. Поглиблене вивчення політичних наук, критичного мислення та суспільних процесів.",
-  keywords:
-    "літня школа для учнів Київ, літня школа з політології, курси критичного мислення Київ, освітні курси соціальні науки, програми для старшокласників Київ, інтенсиви для школярів літо, курси для майбутніх студентів, профорієнтаційні програми Київ, академічні курси для дітей, навчання в Київській школі економіки, літні освітні програми для підлітків, літні інтенсиви Україна, курси суспільних наук для школярів, підготовка до вступу у виш, освітній табір Київ, курси для старшокласників з політології, школа критичного мислення Україна, сучасна освіта для підлітків, навчальні програми 8-11 клас, розвиток лідерських навичок школярів, summer school Ukraine, Kyiv academic summer program, Ukrainian summer school for high school, high school political science Kyiv, critical thinking summer camp, social sciences for teenagers, pre-university courses Ukraine, leadership school Kyiv, Kyiv School of Economics summer program, educational summer camp Kyiv",
-  openGraph: {
-    title: "Гурток політології | Київська школа економіки",
-    description:
-      "Офлайн-курси для учнів 8-11 класів. Політологія, критичне мислення та соціальні науки в Київській школі економіки.",
-    type: "website",
-    url: "https://www.orderschool.online/",
-    locale: "uk_UA",
-    siteName: "Гурток політології",
-    images: [
-      {
-        url: "/og-image.jpg", // Ensure there is a default OG image if possible, or leave as is if dynamic
-        width: 1200,
-        height: 630,
-        alt: "Гурток політології KSE",
-      },
-    ],
-  },
+  applicationName: site.name,
+  keywords: [
+    "гурток політології",
+    "гурток політології Київ",
+    "курси політології для школярів",
+    "політологія для старшокласників",
+    "курси для учнів 8–11 класів",
+    "критичне мислення для підлітків",
+    "Київська школа економіки",
+    "KSE",
+    "підготовка до вступу на політологію",
+    "міжнародні відносини для школярів",
+  ],
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Гурток Політології — Київська школа економіки",
-    description:
-      "Офлайн-курси для учнів 8-11 класів. Політологія, критичне мислення та соціальні науки.",
-    // images: ["/twitter-image.jpg"], // Optional: Add if you have one
-  },
+  formatDetection: { telephone: false, email: false, address: false },
+  category: "education",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#E6E1D0",
 };
 
 export default function RootLayout({
@@ -122,13 +76,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="uk">
+    <html lang="uk" className={`${grotesk.variable} ${gothamPro.variable}`} suppressHydrationWarning>
       <head>
-        <Script
-          id="fb-pixel"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
+        {/* Enables scroll-reveal styles only when JS runs, so content is never hidden without it */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {FB_PIXEL_ID && (
+          <Script
+            id="fb-pixel"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -140,15 +97,16 @@ export default function RootLayout({
             fbq('init', '${FB_PIXEL_ID}');
             fbq('track', 'PageView');
           `,
-          }}
-        />
+            }}
+          />
+        )}
       </head>
-      <body className={`${grotesk.variable} ${gothamPro.variable} antialiased`}>
-        <Suspense fallback={null}>
-          <PixelTracker />
-        </Suspense>
+      <body className="antialiased">
+        <PixelTracker />
+        <RevealObserver />
         <Navigation />
         {children}
+        <Footer />
       </body>
       <GoogleAnalytics gaId="G-7D74XW0FZ1" />
     </html>

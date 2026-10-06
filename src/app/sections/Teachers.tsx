@@ -1,132 +1,75 @@
-"use client";
+import Image, { type StaticImageData } from "next/image";
 
-import { motion, Variants, Transition } from "framer-motion";
-import Image, { StaticImageData } from "next/image";
+import mykyta from "@/assets/mykyta.webp";
+import oksana from "@/assets/oksana.webp";
+import vladyslav from "@/assets/vlad.webp";
+import SectionHeading from "@/components/SectionHeading";
+import { teachers } from "@/content/site";
 
-import mykyta from "@/assets/mykyta.jpg";
-import vladyslav from "@/assets/vlad.jpg";
-import oksana from "@/assets/oksana.jpg";
-
-
-type AnimatedProps = { id?: string };
-
-const transition: Transition = { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] };
-
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.15 },
-  },
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition },
-};
-
-type Teacher = {
-  id: number;
-  name: string;
-  photo: StaticImageData;
-  details: string[];
-};
-
-const teachers: Teacher[] = [
-  {
-    id: 1,
-    name: "Микита\nСеменов",
-    photo: mykyta,
-    details: [
-      "Співробітник дипломатичної місії США в Україні.",
-      "Магістр філософії НаУКМА.",
-      "Стипендіат Єнського університету ім. Фрідріха Шіллера.",
-      "Спеціалізується на праві, міжнародних відносинах, політичній філософії, етиці, моральній філософії.",
-    ],
-  },
-  {
-    id: 2,
-    name: "Владислав\nОзеранський",
-    photo: vladyslav,
-    details: [
-      'Політолог Католицького Університету спеціальності "Етика-Політика-Економіка".',
-      "Молодіжний лектор та тренер, волонтер, донор крові.",
-      "Спеціалізується на теорії міжнародної політики, ідеологіях, теорії ігор і пропаганді.",
-    ],
-  },
-  {
-    id: 3,
-    name: "Оксана\nСироїд",
-    photo: oksana,
-    details: [
-      "Випускниця Оттавського університету (Master of Laws), Магістра права КНУ імені Тараса Шевченка (2002) та бакалавр політології НаУКМА (1997).",
-      "З 2014 народний депутат України і до 2019 обіймала посаду заступника Голови Верховної Ради України.",
-      "З липня 2024 року військовослужбовиця.",
-      "З 2017 і до тепер викладач і доцент Київської школи економіки.",
-    ],
-  },
+const cards = [
+  { ...teachers[0], photo: mykyta },
+  { ...teachers[1], photo: vladyslav },
+  { ...teachers[2], photo: oksana },
 ];
 
-function TeacherCard({ teacher }: { teacher: Teacher }) {
+function TeacherCard({ teacher, photo }: { teacher: (typeof teachers)[number]; photo: StaticImageData }) {
+  const [firstName, ...rest] = teacher.name.split(" ");
   return (
-    <motion.div variants={itemVariants} className="flex flex-col gap-6 h-full">
-      <div className="rounded-3xl border border-black bg-[#E8DED1] overflow-hidden">
-        <div className="relative h-[420px]">
+    <article className="flex h-full flex-col gap-6">
+      <div className="overflow-hidden rounded-lg border border-foreground bg-background">
+        <div className="relative aspect-4/5 md:aspect-auto md:h-[420px]">
           <Image
-            src={teacher.photo}
-            alt={teacher.name.replace("\n", " ")}
+            src={photo}
+            alt={`${teacher.name}, викладацька команда Гуртка політичних студій KSE`}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 540px"
+            sizes="(min-width: 1024px) 300px, (min-width: 768px) 33vw, 80vw"
             className="object-cover"
-            priority={teacher.id === 1}
           />
         </div>
-        <div className="bg-[#F42B39] text-white py-4 text-center">
-          <h3 className="text-2xl font-bold leading-tight whitespace-pre-line">
-            {teacher.name}
+        <div className="bg-primary py-4 text-center text-white">
+          <h3 className="font-display text-2xl leading-tight uppercase">
+            {firstName}
+            <br />
+            {rest.join(" ")}
           </h3>
         </div>
       </div>
 
-      <div className="rounded-3xl border border-black bg-[#F42B39] text-white px-6 py-8 flex flex-col gap-8 flex-1">
-        <ul className="space-y-3 text-left leading-relaxed flex-1">
-          {teacher.details.map((info, idx) => (
-            <li key={idx}>{info}</li>
+      <div className="flex flex-1 flex-col rounded-lg border border-foreground bg-card px-6 py-8">
+        <ul className="flex-1 space-y-3 text-left type-body">
+          {teacher.details.map((info) => (
+            <li key={info} className="flex gap-3">
+              <span aria-hidden className="mt-2 size-2 shrink-0 rounded-full bg-primary" />
+              <span>{info}</span>
+            </li>
           ))}
         </ul>
       </div>
-    </motion.div>
+    </article>
   );
 }
 
-export default function Teachers({ id }: AnimatedProps) {
+export default function Teachers({ id }: { id?: string }) {
   return (
-    <motion.section
-      id={id}
-      className="w-full min-h-screen py-20 bg-[#E8DED1]"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-      style={{ fontFamily: '"Gotham Pro ", "Gotham Pro", sans-serif' }}
-    >
-      <motion.div
-        className="max-w-6xl mx-auto text-center px-4 mb-16"
-        variants={itemVariants}
-      >
-        <h2 className="text-4xl tracking-wider uppercase font-bold mb-2 relative inline-block">
-          ВИКЛАДАЧІ
-          <span className="absolute -bottom-1 left-0 right-0 h-1 bg-[#F42B39]" />
-        </h2>
-      </motion.div>
-      <motion.div
-        className="max-w-5xl mx-auto px-4"
-        variants={containerVariants}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-12 md:gap-y-0 md:auto-rows-[minmax(0,1fr)]">
-          {teachers.map((teacher) => (
-            <TeacherCard key={teacher.id} teacher={teacher} />
+    <section id={id} className="w-full py-12 md:py-20">
+      <div data-reveal="up" className="mx-auto mb-12 max-w-6xl px-6 md:mb-16">
+        <SectionHeading>Викладачі</SectionHeading>
+      </div>
+      {/* Phones: a swipeable row that peeks the next card, like the interviews. From md: three columns.
+          The row reveals as a whole: cards off to the side never scroll into view, so they would stay
+          shifted down and could be scrolled vertically inside the row. */}
+      <div className="mx-auto max-w-5xl md:px-6">
+        <div
+          data-reveal="up"
+          className="flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto overflow-y-hidden overscroll-x-contain px-6 pb-2 [scrollbar-width:none] md:grid md:auto-rows-[minmax(0,1fr)] md:grid-cols-3 md:gap-x-12 md:overflow-visible md:overflow-y-visible md:px-0 md:pb-0"
+        >
+          {cards.map((teacher) => (
+            <div key={teacher.name} className="w-[80vw] max-w-sm shrink-0 snap-start md:w-auto md:max-w-none">
+              <TeacherCard teacher={teacher} photo={teacher.photo} />
+            </div>
           ))}
         </div>
-      </motion.div>
-    </motion.section>
+      </div>
+    </section>
   );
 }

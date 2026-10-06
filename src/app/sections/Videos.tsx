@@ -1,88 +1,66 @@
-"use client"
+import Link from "next/link";
 
-import { AnimatedProps } from "@/types/motion";
-import { motion, Variants, Transition } from "framer-motion";
-
+import polit1Poster from "@/assets/prev_interview_1.webp";
+import vitaliyPoster from "@/assets/prev_interview_2.webp";
+import sectionBackground from "@/assets/videos-bg.webp";
+import SectionHeading from "@/components/SectionHeading";
 import VideoPlayer from "@/components/sections/VideoPlayer";
-
-import interviewOneBg from "@/assets/prev_interview_1.png";
-import sectionBackground from "@/assets/videos-bg.png";
-
-import interviewTwo from "../../../videos/Polit2.mov";
-import interviewTwoBg from "@/assets/prev_interview_2.png";
-
-import interviewThreeBg from "@/assets/prev_interview_3.png";
-
+import { Button } from "@/components/ui/button";
 
 import interviewOne from "../../../videos/Polit1.mov";
+import interviewTwo from "../../../videos/Polit2.mov";
 
-const transition: Transition = { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] };
-
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.2 },
+// Polit2 is Vitaliy. Polit1 keeps the poster it had on the original site (prev_interview_1, captioned
+// "Матвій"). Katya has a poster (prev_interview_3.webp) but no video file yet.
+const videos = [
+  {
+    src: interviewTwo,
+    poster: vitaliyPoster,
+    title: "Інтервʼю з Віталієм, 10 клас, випускником Гуртка політичних студій",
   },
-};
+  {
+    src: interviewOne,
+    poster: polit1Poster,
+    title: "Інтервʼю з випускницею Гуртка політичних студій",
+  },
+];
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition },
-};
-
-export default function Videos({ id }: AnimatedProps) {
+export default function Videos({ id }: { id?: string }) {
   return (
-    <motion.section
-      className="hidden md:block relative w-full min-h-screen py-12 md:py-20"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: false, amount: 0.3 }}
-      id={id}
-    >
-      <motion.div
-        className="relative z-10 max-w-6xl mx-auto text-center text-black px-4 mb-8 md:mb-16"
-        variants={itemVariants}
-      >
-        <h2 className="text-2xl md:text-4xl tracking-wide md:tracking-wider uppercase font-sans font-bold mb-2">
-          Інтервʼю з випускниками
-        </h2>
-      </motion.div>
+    <section className="relative w-full py-12 md:py-20" id={id}>
+      <div data-reveal="up" className="relative z-10 mx-auto mb-8 max-w-6xl px-4 md:mb-16">
+        <SectionHeading>Інтервʼю з випускниками</SectionHeading>
+      </div>
 
       <div
         className="bg-cover bg-center bg-no-repeat py-12"
-        style={{
-          backgroundImage: `url(${sectionBackground.src})`,
-        }}
+        style={{ backgroundImage: `url(${sectionBackground.src})` }}
       >
-        <motion.div
-          className="relative z-10 mx-auto px-4 sm:px-8 md:px-16 lg:px-32 xl:px-64"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-        >
-          <div className="flex justify-center gap-12 my-8 sm:my-12 md:my-16 lg:my-18">
-            <motion.div variants={itemVariants} className="w-full max-w-2xl">
-              <VideoPlayer
-                videoSrc={interviewOne}
-                posterSrc={interviewOneBg}
-              />
-            </motion.div>
-            <motion.div variants={itemVariants} className="w-full max-w-2xl">
-              <VideoPlayer
-                videoSrc={interviewTwo}
-                posterSrc={interviewThreeBg}
-              />
-            </motion.div>
-            <motion.div variants={itemVariants} className="w-full max-w-2xl">
-              <VideoPlayer
-                videoSrc={interviewTwo}
-                posterSrc={interviewTwoBg}
-              />
-            </motion.div>
+        {/* Phones: a swipeable row that peeks the next video. From md: side by side.
+          The row reveals as a whole: cards off to the side never scroll into view, so they would stay
+          shifted down and could be scrolled vertically inside the row. */}
+        <div className="relative z-10 mx-auto md:px-16 lg:px-32 xl:px-64">
+          <div
+            data-reveal="up"
+            className="flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto overflow-y-hidden overscroll-x-contain px-6 py-4 [scrollbar-width:none] md:my-16 md:justify-center md:gap-12 md:overflow-visible md:overflow-y-visible md:px-0 md:py-0 lg:my-18"
+          >
+            {videos.map((video) => (
+              <div
+                key={video.title}
+                className="w-[70vw] max-w-xs shrink-0 snap-start md:w-full md:max-w-[18rem] md:shrink"
+              >
+                <VideoPlayer videoSrc={video.src} posterSrc={video.poster} title={video.title} />
+              </div>
+            ))}
           </div>
-        </motion.div>
+        </div>
       </div>
-    </motion.section>
+
+      <div className="mt-10 flex justify-center px-6 md:mt-12">
+        <Button asChild size="lg" className="w-full sm:w-auto">
+          <Link href="/gallery">Більше фото й відео</Link>
+        </Button>
+      </div>
+    </section>
   );
 }

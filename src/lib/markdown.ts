@@ -1,7 +1,6 @@
 import {
   audience,
   courseAnnouncement,
-  faq,
   knowledgeTopics,
   namedAfter,
   site,
@@ -9,12 +8,13 @@ import {
   structure,
   teachers,
 } from "@/content/site";
+import type { FaqItem } from "@/lib/faq";
 import { hasOpenModules, type TimelineModule } from "@/lib/modules";
 
 const list = (items: readonly string[]) => items.map((item) => `- ${item}`).join("\n");
 
 // Markdown version of the home page for LLMs and other text-only clients (/index.md)
-export function homeMarkdown(modules: TimelineModule[]): string {
+export function homeMarkdown(modules: TimelineModule[], faq: readonly FaqItem[]): string {
   const moduleList = hasOpenModules(modules)
     ? modules
         .map((m) => {
@@ -29,7 +29,7 @@ export function homeMarkdown(modules: TimelineModule[]): string {
 
 > ${site.description}
 
-${site.shortDescription} Навчання відбувається офлайн у головному кампусі KSE (${site.address.street}, ${site.address.city}) та в наших партнерів. Ви ознайомитеся з основами політичних наук і політичної філософії, вивчите історію політичних ідей та їхній вплив на сучасність. Без зайвих спрощень, легковажності й поверхневості. Лише поглиблене вивчення першоджерел і літератури, практичні кейси та власні дослідження.
+${site.shortDescription} Навчання відбувається офлайн у кампусі Інституту Томи Аквінського (${site.address.street}, ${site.address.city}) та на виїзних заняттях. Ви ознайомитеся з основами політичних наук і політичної філософії, вивчите історію політичних ідей та їхній вплив на сучасність. Без зайвих спрощень, легковажності й поверхневості. Лише поглиблене вивчення першоджерел і літератури, практичні кейси та власні дослідження.
 
 - Реєстрація: ${SITE_URL}/onboarding
 - Галерея (фото й відео за минулі роки): ${SITE_URL}/gallery
@@ -91,7 +91,7 @@ export function llmsTxt(): string {
 
 > ${site.description}
 
-Офлайн-гурток для учнів 8–11 класів у головному кампусі Київської школи економіки (${site.address.street}, ${site.address.city}) та в партнерів. Річна програма складається з двотижневих тематичних модулів; кожен модуль — три заняття: «Теорія», «Практика» та «Досвід» (візити до державних інституцій і посольств, зустрічі з експертами). Можна записатися на окремий модуль або на весь курс; після 12 модулів учні отримують сертифікат KSE.
+Офлайн-гурток KSE та Інституту св. Томи Аквінського для учнів 8–11 класів у кампусі Інституту (${site.address.street}, ${site.address.city}) та на виїзних заняттях. Річна програма складається з двотижневих тематичних модулів; кожен модуль — три заняття: «Теорія», «Практика» та «Досвід» (візити до державних інституцій і посольств, зустрічі з експертами). Запис — щонайменше на три модулі або на весь курс; після 12 модулів учні отримують сертифікат KSE.
 
 ## Основне
 

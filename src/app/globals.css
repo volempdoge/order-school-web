@@ -100,12 +100,6 @@
       scroll-margin-top: 6rem;
     }
   }
-
-  @media (prefers-reduced-motion: no-preference) {
-    html {
-      scroll-behavior: smooth;
-    }
-  }
 }
 
 /* Typography scale. Use these instead of ad-hoc font/size/tracking combinations. */

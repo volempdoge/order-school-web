@@ -38,6 +38,7 @@ jobs:
       # Optional: without them the page builds with an empty module list
       NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
       NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+      NOTION_FAQ_DATABASE_ID: ${{ secrets.NOTION_FAQ_DATABASE_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

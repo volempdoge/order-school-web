@@ -1,8 +1,8 @@
 import SectionHeading from "@/components/SectionHeading";
 import { Disclosure } from "@/components/ui/disclosure";
-import { faq } from "@/content/site";
+import type { FaqItem } from "@/lib/faq";
 
-export default function Faq({ id }: { id?: string }) {
+export default function Faq({ id, items }: { id?: string; items: readonly FaqItem[] }) {
   return (
     <section id={id} className="relative w-full py-12 md:py-20">
       <div data-reveal="up" className="mx-auto max-w-6xl px-6">
@@ -10,7 +10,7 @@ export default function Faq({ id }: { id?: string }) {
       </div>
 
       <div className="mx-auto my-12 max-w-7xl px-6 md:my-16 md:px-8">
-        {faq.map((item, i) => (
+        {items.map((item, i) => (
           <Disclosure
             key={item.q}
             name="faq"

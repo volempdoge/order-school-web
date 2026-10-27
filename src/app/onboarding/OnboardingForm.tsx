@@ -109,7 +109,14 @@ function ConsentCheckbox({
   );
 }
 
-export default function OnboardingForm({ preRegistration = false }: { preRegistration?: boolean }) {
+export default function OnboardingForm({
+  preRegistration = false,
+  moduleBlock = null,
+}: {
+  preRegistration?: boolean;
+  // The upcoming modules from Notion as one option, e.g. "Модулі 1–3: Вступ, …"
+  moduleBlock?: string | null;
+}) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
   const [submitError, setSubmitError] = React.useState(false);
@@ -360,14 +367,9 @@ export default function OnboardingForm({ preRegistration = false }: { preRegistr
                           <SelectTrigger id={field.name} className="w-full bg-white px-4 text-base">
                             <SelectValue placeholder="Оберіть модуль" />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="intro">Вступ</SelectItem>
-                            <SelectItem value="Міжнародне право">Міжнародне право</SelectItem>
-                            <SelectItem value="Війна, торг, правила">Війна, торг, правила</SelectItem>
-                            <SelectItem value="Політичні режими">Політичні режими</SelectItem>
-                            <SelectItem value="Корупція та як політики (не)можуть на неї впливати">
-                              Корупція та як політики (не)можуть на неї впливати
-                            </SelectItem>
+                          {/* Capped at the trigger width so the long option wraps instead of running off a phone screen */}
+                          <SelectContent className="max-w-(--radix-select-trigger-width)">
+                            {moduleBlock && <SelectItem value={moduleBlock}>{moduleBlock}</SelectItem>}
                             <SelectItem value="Весь курс">Весь курс</SelectItem>
                           </SelectContent>
                         </Select>

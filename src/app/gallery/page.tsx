@@ -12,8 +12,9 @@ export const metadata = pageMetadata({
   path: "/gallery",
 });
 
-// Content comes from Notion; new photos are copied to Vercel Blob when the page regenerates
-export const revalidate = 300;
+// Content comes from Notion; new photos are copied to Vercel Blob when the page regenerates.
+// Hourly: every regeneration lists the Blob store, and the free Hobby plan allows 2,000 of those a month
+export const revalidate = 3600;
 // The first sync after many photos are added copies them all
 export const maxDuration = 300;
 

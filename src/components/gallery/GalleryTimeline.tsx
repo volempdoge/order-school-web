@@ -38,7 +38,7 @@ export default function GalleryTimeline({ events }: { events: GalleryEvent[] }) 
   return (
     <>
       {events.length === 0 ? (
-        <div className="mt-12 rounded-lg bg-primary px-6 py-8 text-white md:px-12 md:py-10">
+        <div data-reveal="up" className="mt-12 rounded-lg bg-primary px-6 py-8 text-white md:px-12 md:py-10">
           <p className="font-body text-[1.1875rem] leading-snug font-bold md:text-xl">
             Скоро тут зʼявляться фото й відео з минулих років. А поки — зазирніть у наші соцмережі.
           </p>
@@ -47,12 +47,12 @@ export default function GalleryTimeline({ events }: { events: GalleryEvent[] }) 
       ) : (
         byYear(events).map(([year, yearEvents]) => (
           <section key={year} aria-labelledby={`year-${year}`} className="mt-14 md:mt-20">
-            <h2 id={`year-${year}`} className="type-h2 text-primary">
+            <h2 id={`year-${year}`} data-reveal="up" className="type-h2 text-primary">
               {year}
             </h2>
             <ol className="mt-6 space-y-14 border-l-2 border-primary pl-6 md:mt-8 md:space-y-20 md:pl-10">
               {yearEvents.map((event) => (
-                <li key={event.id} className="relative">
+                <li key={event.id} data-reveal="up" className="relative">
                   <Marker />
                   <article>
                     {event.date && (

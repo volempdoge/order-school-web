@@ -1,5 +1,5 @@
 import { pageMetadata } from "@/lib/metadata";
-import { getTimeline, hasOpenModules } from "@/lib/modules";
+import { enrolmentBlock, getTimeline, hasOpenModules } from "@/lib/modules";
 
 import OnboardingForm from "./OnboardingForm";
 
@@ -17,7 +17,7 @@ export default async function OnboardingPage() {
   const { modules } = await getTimeline();
   return (
     <main>
-      <OnboardingForm preRegistration={!hasOpenModules(modules)} />
+      <OnboardingForm preRegistration={!hasOpenModules(modules)} moduleBlock={enrolmentBlock(modules)} />
     </main>
   );
 }

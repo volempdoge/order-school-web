@@ -1,6 +1,7 @@
 import type { Viewport } from "next";
 
-import { faq, site, SITE_URL } from "@/content/site";
+import { site, SITE_URL } from "@/content/site";
+import { type FaqItem, getFaq } from "@/lib/faq";
 import { getTimeline, kyivISODate, type TimelineModule } from "@/lib/modules";
 
 import AboutCourse from "./sections/AboutCourse";
@@ -25,13 +26,22 @@ export const viewport: Viewport = {
 // Modules come from Notion: the page is static HTML, regenerated at most once a minute
 export const revalidate = 60;
 
-function jsonLd(modules: TimelineModule[]) {
+// The share image (app/opengraph-image.jpg), also offered to Google as the result's thumbnail
+const PAGE_IMAGE = {
+  "@type": "ImageObject",
+  url: `${SITE_URL}/opengraph-image.jpg`,
+  width: 1200,
+  height: 630,
+};
+
+function jsonLd(modules: TimelineModule[], faq: readonly FaqItem[]) {
   const organization = {
     "@type": "EducationalOrganization",
     "@id": `${SITE_URL}/#organization`,
     name: site.fullName,
     alternateName: site.name,
     url: SITE_URL,
+    logo: `${SITE_URL}/icon.png`,
     email: site.email,
     sameAs: [site.instagram, site.telegram],
     parentOrganization: {
@@ -69,8 +79,8 @@ function jsonLd(modules: TimelineModule[]) {
       name: `Модуль ${module.moduleId}: ${module.title}`,
       description: module.description || undefined,
       courseMode: "Onsite",
-      startDate: kyivISODate(module.startDate),
-      endDate: kyivISODate(module.endDate),
+      startDate: module.startDate ? kyivISODate(module.startDate) : undefined,
+      endDate: module.endDate ? kyivISODate(module.endDate) : undefined,
       location: {
         "@type": "Place",
         name: site.address.place,
@@ -88,17 +98,29 @@ function jsonLd(modules: TimelineModule[]) {
     })),
   };
 
-  return { "@context": "https://schema.org", "@graph": [organization, course, faqPage] };
+  const webPage = {
+    "@type": "WebPage",
+    "@id": `${SITE_URL}/#webpage`,
+    url: SITE_URL,
+    name: site.title,
+    description: site.description,
+    inLanguage: site.language,
+    about: { "@id": `${SITE_URL}/#organization` },
+    primaryImageOfPage: PAGE_IMAGE,
+    image: PAGE_IMAGE,
+  };
+
+  return { "@context": "https://schema.org", "@graph": [organization, webPage, course, faqPage] };
 }
 
 export default async function Home() {
-  const { modules } = await getTimeline();
+  const [{ modules }, faq] = await Promise.all([getTimeline(), getFaq()]);
 
   return (
     <main className="min-h-screen overflow-x-hidden">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(modules)).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(modules, faq)).replace(/</g, "\\u003c") }}
       />
       <Hero id="top" />
       <AboutQuote />
@@ -110,7 +132,7 @@ export default async function Home() {
       <Teachers id="teachers" />
       <Videos id="interview" />
       <NamedAfter />
-      <Faq id="faq" />
+      <Faq id="faq" items={faq} />
       <Contacts id="contacts" />
       <Map />
     </main>

@@ -82,7 +82,11 @@ export default function Timeline({ id = "timeline", modules }: { id?: string; mo
             summary={
               <span className="flex flex-col gap-1.5 text-left">
                 <span className="flex flex-wrap items-center gap-2 type-small font-bold text-muted-foreground">
-                  <time dateTime={kyivISODate(module.startDate)}>{module.dateRange}</time>
+                  {module.startDate ? (
+                    <time dateTime={kyivISODate(module.startDate)}>{module.dateRange}</time>
+                  ) : (
+                    <span>{module.dateRange}</span>
+                  )}
                   <StatusBadge status={module.status} />
                 </span>
                 <span className="font-display font-bold tracking-[0.02em]">

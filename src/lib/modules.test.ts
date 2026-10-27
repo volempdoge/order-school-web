@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { buildTimeline, kyivISODate } from "./modules";
+import { buildTimeline, enrolmentBlock, kyivISODate } from "./modules";
 
-const raw = (moduleId: number, startDate: string, endDate: string) => ({
-  id: `m${moduleId}`,
+const raw = (n: number, startDate: string, endDate: string, moduleId?: number) => ({
+  id: `m${n}`,
   moduleId,
-  title: `Модуль ${moduleId}`,
+  title: `Модуль ${n}`,
   description: "",
   startDate,
   endDate,
@@ -13,14 +13,41 @@ const raw = (moduleId: number, startDate: string, endDate: string) => ({
 
 describe("buildTimeline", () => {
   const modules = [
-    raw(3, "2026-11-01", "2026-11-14"),
     raw(1, "2026-10-01", "2026-10-14"),
     raw(2, "2026-10-15", "2026-10-28"),
+    raw(3, "2026-11-01", "2026-11-14"),
   ];
 
-  it("sorts modules by module id", () => {
-    const result = buildTimeline(modules, new Date("2026-09-01T12:00:00Z"));
-    expect(result.map((m) => m.moduleId)).toEqual([1, 2, 3]);
+  it("sorts and numbers modules by Module ID", () => {
+    const result = buildTimeline(
+      [raw(1, "2026-10-01", "2026-10-14", 3), raw(2, "", "", 2), raw(3, "2026-09-01", "2026-09-14", 1)],
+      new Date("2026-08-01T12:00:00Z"),
+    );
+    expect(result.map((m) => [m.id, m.moduleId])).toEqual([
+      ["m3", 1],
+      ["m2", 2],
+      ["m1", 3],
+    ]);
+  });
+
+  it("puts modules without Module ID last, in Notion order", () => {
+    const result = buildTimeline(
+      [raw(1, "2026-10-01", "2026-10-14"), raw(2, "2026-09-01", "2026-09-14", 1), raw(3, "", "")],
+      new Date("2026-08-01T12:00:00Z"),
+    );
+    expect(result.map((m) => m.id)).toEqual(["m2", "m1", "m3"]);
+  });
+
+  it("numbers modules in the order Notion sends them", () => {
+    const result = buildTimeline(
+      [raw(1, "2026-10-01", "2026-10-14"), raw(2, "", ""), raw(3, "2026-09-01", "2026-09-14")],
+      new Date("2026-09-01T12:00:00Z"),
+    );
+    expect(result.map((m) => [m.id, m.moduleId])).toEqual([
+      ["m1", 1],
+      ["m2", 2],
+      ["m3", 3],
+    ]);
   });
 
   it("marks the running module and the one after it", () => {
@@ -46,31 +73,45 @@ describe("buildTimeline", () => {
   it("parses DD.MM ranges into the current academic year", () => {
     // September 2026 → academic year 2026/27: January belongs to 2027
     const [module] = buildTimeline(
-      [{ id: "x", moduleId: 1, title: "", description: "", dateRange: "20.01-02.02" }],
+      [{ id: "x", title: "", description: "", dateRange: "20.01-02.02" }],
       new Date("2026-09-10T12:00:00Z"),
     );
-    expect(module && kyivISODate(module.startDate)).toBe("2027-01-20");
-    expect(module && kyivISODate(module.endDate)).toBe("2027-02-02");
+    expect(module?.startDate && kyivISODate(module.startDate)).toBe("2027-01-20");
+    expect(module?.endDate && kyivISODate(module.endDate)).toBe("2027-02-02");
     expect(module?.dateRange).toBe("20.01–02.02");
   });
 
   it("wraps a DD.MM range that crosses New Year", () => {
     const [module] = buildTimeline(
-      [{ id: "x", moduleId: 1, title: "", description: "", dateRange: "20.12-10.01" }],
+      [{ id: "x", title: "", description: "", dateRange: "20.12-10.01" }],
       new Date("2026-09-10T12:00:00Z"),
     );
-    expect(module && kyivISODate(module.startDate)).toBe("2026-12-20");
-    expect(module && kyivISODate(module.endDate)).toBe("2027-01-10");
+    expect(module?.startDate && kyivISODate(module.startDate)).toBe("2026-12-20");
+    expect(module?.endDate && kyivISODate(module.endDate)).toBe("2027-01-10");
   });
 
-  it("drops modules without a valid start date", () => {
-    const result = buildTimeline([raw(1, "not a date", "")], new Date());
-    expect(result).toEqual([]);
+  it("lists modules without dates as not scheduled yet, with no status", () => {
+    const result = buildTimeline(
+      [raw(1, "2026-10-01", "2026-10-14"), raw(2, "", ""), raw(3, "not a date", "")],
+      new Date("2026-09-01T12:00:00Z"),
+    );
+    expect(result.map((m) => m.dateRange)).toEqual(["01.10–14.10", "Дати уточнюються", "Дати уточнюються"]);
+    expect(result.map((m) => m.status)).toEqual(["незабаром початок", null, null]);
+    expect(result[1]?.startDate).toBeNull();
+    expect(result[1]?.endDate).toBeNull();
+  });
+
+  it("does not mark an undated module as upcoming", () => {
+    const result = buildTimeline(
+      [raw(1, "", ""), raw(2, "2026-10-01", "2026-10-14")],
+      new Date("2026-09-01T12:00:00Z"),
+    );
+    expect(result.map((m) => m.status)).toEqual([null, "незабаром початок"]);
   });
 
   it("treats a module without an end date as a single day", () => {
     const [module] = buildTimeline([raw(1, "2026-10-01", "")], new Date("2026-09-01T12:00:00Z"));
-    expect(module && kyivISODate(module.endDate)).toBe("2026-10-01");
+    expect(module?.endDate && kyivISODate(module.endDate)).toBe("2026-10-01");
   });
 });
 
@@ -100,8 +141,8 @@ describe("module days follow Kyiv time, not the server's UTC clock", () => {
   it("uses Kyiv dates for the date range and machine-readable dates", () => {
     const [first] = buildTimeline(modules, new Date("2026-09-01T12:00:00Z"));
     expect(first?.dateRange).toBe("01.10–14.10");
-    expect(first && kyivISODate(first.startDate)).toBe("2026-10-01");
-    expect(first && kyivISODate(first.endDate)).toBe("2026-10-14");
+    expect(first?.startDate && kyivISODate(first.startDate)).toBe("2026-10-01");
+    expect(first?.endDate && kyivISODate(first.endDate)).toBe("2026-10-14");
   });
 
   it("keeps the exact instant when Notion sends a time", () => {
@@ -110,5 +151,31 @@ describe("module days follow Kyiv time, not the server's UTC clock", () => {
       new Date("2026-10-01T16:00:00Z"),
     );
     expect(module?.status).toBe("триває");
+  });
+});
+
+describe("enrolmentBlock", () => {
+  const now = new Date("2026-10-26T12:00:00Z");
+  const modules = buildTimeline(
+    [
+      { ...raw(1, "2026-03-14", "2026-03-21", 1), title: "Корупція" },
+      { ...raw(2, "2026-10-31", "2026-11-07", 2), title: "Вступ" },
+      { ...raw(3, "2026-11-14", "2026-11-21", 3), title: "Політичні режими" },
+      { ...raw(4, "", "", 4), title: "Політична філософія" },
+    ],
+    now,
+  );
+
+  it("joins the modules that have not ended into one option", () => {
+    expect(enrolmentBlock(modules, now)).toBe("Модулі 2–4: Вступ, Політичні режими, Політична філософія");
+  });
+
+  it("names a single module on its own", () => {
+    expect(enrolmentBlock(modules.slice(0, 2), now)).toBe("Модуль 2: Вступ");
+  });
+
+  it("offers nothing once every module is over", () => {
+    expect(enrolmentBlock(modules.slice(0, 1), now)).toBeNull();
+    expect(enrolmentBlock([], now)).toBeNull();
   });
 });

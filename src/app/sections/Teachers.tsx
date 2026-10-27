@@ -55,9 +55,8 @@ export default function Teachers({ id }: { id?: string }) {
       <div data-reveal="up" className="mx-auto mb-12 max-w-6xl px-6 md:mb-16">
         <SectionHeading>Викладачі</SectionHeading>
       </div>
-      {/* Phones: a swipeable row that peeks the next card, like the interviews. From md: three columns.
-          The row reveals as a whole: cards off to the side never scroll into view, so they would stay
-          shifted down and could be scrolled vertically inside the row. */}
+      {/* Phones: a swipeable row, like the interviews; from md, three columns. The row reveals as a whole:
+          cards off to the side never scroll into view, so they would stay hidden */}
       <div className="mx-auto max-w-5xl md:px-6">
         <div
           data-reveal="up"

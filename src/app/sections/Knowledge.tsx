@@ -90,7 +90,15 @@ export default function Knowledge({ id }: { id?: string }) {
 
         {/* Phones and tablets: the original winding route, with the topics as real text on its boxes */}
         <div className="@container relative mx-4 sm:mx-auto sm:max-w-xl lg:hidden">
-          <Image src={knowledgeRouteMobile} alt="" aria-hidden className="h-auto w-full" />
+          {/* A background, not an <img>, so Google doesn't take it for the search thumbnail */}
+          <div
+            aria-hidden
+            className="w-full bg-contain bg-no-repeat"
+            style={{
+              backgroundImage: `url(${knowledgeRouteMobile.src})`,
+              aspectRatio: `${knowledgeRouteMobile.width} / ${knowledgeRouteMobile.height}`,
+            }}
+          />
           <ol className="absolute inset-0">
             {knowledgeTopics.map((topic, index) => {
               const box = MOBILE_LABELS[index];

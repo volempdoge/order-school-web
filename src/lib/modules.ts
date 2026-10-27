@@ -5,26 +5,30 @@ export type ModuleStatus = "триває" | "наступний" | "незаба
 
 export interface TimelineModule {
   id: string;
+  // "Module ID" from Notion; a module without one gets its position in the list, counted from 1
   moduleId: number;
   title: string;
   description: string;
-  startDate: Date;
-  endDate: Date;
+  // null while the dates are not set in Notion yet
+  startDate: Date | null;
+  endDate: Date | null;
   dateRange: string;
   status: ModuleStatus;
 }
 
 interface ModuleRaw {
   id: string;
-  moduleId: number;
+  moduleId?: number | null;
   title: string;
-  dateRange?: string; // Format: "DD.MM-DD.MM" (optional for backward compatibility)
-  startDate?: string; // ISO format or parseable date string
-  endDate?: string; // ISO format or parseable date string
+  dateRange?: string; // "DD.MM-DD.MM", from the old table format
+  startDate?: string; // ISO date or timestamp
+  endDate?: string;
   description: string;
 }
 
-type NormalizedModule = Omit<TimelineModule, "dateRange" | "status">;
+type NormalizedModule = Omit<TimelineModule, "moduleId" | "dateRange" | "status"> & {
+  moduleId: number | null;
+};
 
 const TIME_ZONE = "Europe/Kyiv";
 
@@ -112,7 +116,7 @@ function parseDate(value: string, baseYear: number, edge: "start" | "end"): Date
   return isNaN(parsed.getTime()) ? null : parsed;
 }
 
-function normalizeModule(raw: ModuleRaw, baseYear: number): NormalizedModule | null {
+function normalizeModule(raw: ModuleRaw, baseYear: number): NormalizedModule {
   let startDate: Date | null = null;
   let endDate: Date | null = null;
 
@@ -128,20 +132,20 @@ function normalizeModule(raw: ModuleRaw, baseYear: number): NormalizedModule | n
   if (!startDate && raw.startDate) startDate = parseDate(raw.startDate, baseYear, "start");
   if (!endDate && raw.endDate) endDate = parseDate(raw.endDate, baseYear, "end");
 
-  if (!startDate) return null;
-
+  // Not scheduled yet: listed as "Дати уточнюються" and never gets a status
+  if (!startDate) endDate = null;
   // No end date: the module is a single day
-  if (!endDate) endDate = endOfKyivDay(kyivCalendarDay(startDate));
+  else if (!endDate) endDate = endOfKyivDay(kyivCalendarDay(startDate));
 
   // A DD.MM range that crosses New Year (e.g. 20.12-10.01) ends in the following year
-  if (endDate < startDate) {
+  if (startDate && endDate && endDate < startDate) {
     const { year, month, day } = kyivCalendarDay(endDate);
     endDate = endOfKyivDay({ year: year + 1, month, day });
   }
 
   return {
     id: raw.id,
-    moduleId: raw.moduleId,
+    moduleId: raw.moduleId ?? null,
     title: raw.title,
     startDate,
     endDate,
@@ -149,7 +153,8 @@ function normalizeModule(raw: ModuleRaw, baseYear: number): NormalizedModule | n
   };
 }
 
-function formatDateRange(startDate: Date, endDate: Date): string {
+function formatDateRange(startDate: Date | null, endDate: Date | null): string {
+  if (!startDate || !endDate) return "Дати уточнюються";
   const format = (d: Date) =>
     d.toLocaleDateString("uk-UA", { day: "2-digit", month: "2-digit", timeZone: TIME_ZONE });
   return `${format(startDate)}–${format(endDate)}`;
@@ -160,18 +165,19 @@ export function buildTimeline(rawModules: ModuleRaw[], now: Date = new Date()): 
   const today = kyivCalendarDay(now);
   const baseYear = today.month >= 9 ? today.year : today.year - 1;
 
+  // By Module ID; modules without one go last, in the order Notion sends them (by start date)
   const sorted = rawModules
     .map((raw) => normalizeModule(raw, baseYear))
-    .filter((m): m is NormalizedModule => m !== null)
-    .sort((a, b) => a.moduleId - b.moduleId);
+    .sort((a, b) => (a.moduleId ?? Infinity) - (b.moduleId ?? Infinity) || 0);
 
   const nowTime = now.getTime();
 
-  // CASE A - active module; CASE B - if none is active, the nearest future one
+  // The running module or, if none, the nearest upcoming one
   const activeIndex = sorted.findIndex(
-    (m) => nowTime >= m.startDate.getTime() && nowTime <= m.endDate.getTime(),
+    (m) => m.startDate && m.endDate && nowTime >= m.startDate.getTime() && nowTime <= m.endDate.getTime(),
   );
-  const soonIndex = activeIndex === -1 ? sorted.findIndex((m) => m.startDate.getTime() > nowTime) : -1;
+  const soonIndex =
+    activeIndex === -1 ? sorted.findIndex((m) => m.startDate && m.startDate.getTime() > nowTime) : -1;
 
   return sorted.map((module, index) => {
     let status: ModuleStatus = null;
@@ -182,13 +188,32 @@ export function buildTimeline(rawModules: ModuleRaw[], now: Date = new Date()): 
       status = "незабаром початок";
     }
 
-    return { ...module, status, dateRange: formatDateRange(module.startDate, module.endDate) };
+    return {
+      ...module,
+      moduleId: module.moduleId ?? index + 1,
+      status,
+      dateRange: formatDateRange(module.startDate, module.endDate),
+    };
   });
 }
 
 /** A module is running or coming up. Otherwise the site announces upcoming courses instead of a schedule. */
 export function hasOpenModules(modules: TimelineModule[]): boolean {
   return modules.some((module) => module.status !== null);
+}
+
+// The form's option for the modules that have not ended, as one block: enrolment is for at least three.
+// null when nothing is left to enrol in.
+export function enrolmentBlock(modules: TimelineModule[], now: Date = new Date()): string | null {
+  const open = modules.filter((m) => !m.endDate || m.endDate.getTime() >= now.getTime());
+  const first = open[0];
+  const last = open.at(-1);
+  if (!first || !last) return null;
+
+  const titles = open.map((m) => m.title).join(", ");
+  return first === last
+    ? `Модуль ${first.moduleId}: ${titles}`
+    : `Модулі ${first.moduleId}–${last.moduleId}: ${titles}`;
 }
 
 export interface Timeline {

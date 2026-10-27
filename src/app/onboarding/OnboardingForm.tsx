@@ -109,7 +109,14 @@ function ConsentCheckbox({
   );
 }
 
-export default function OnboardingForm({ preRegistration = false }: { preRegistration?: boolean }) {
+export default function OnboardingForm({
+  preRegistration = false,
+  moduleBlock = null,
+}: {
+  preRegistration?: boolean;
+  // The upcoming modules from Notion as one option, e.g. "Модулі 1–3: Вступ, …"
+  moduleBlock?: string | null;
+}) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
   const [submitError, setSubmitError] = React.useState(false);
@@ -172,7 +179,10 @@ export default function OnboardingForm({ preRegistration = false }: { preRegistr
   return (
     <>
       <section className="flex min-h-screen items-center justify-center p-4 pb-16">
-        <div className="mt-24 w-full max-w-2xl rounded-lg bg-card p-6 shadow-xl md:mt-32 md:p-12">
+        <div
+          data-reveal="up"
+          className="mt-24 w-full max-w-2xl rounded-lg bg-card p-6 shadow-xl md:mt-32 md:p-12"
+        >
           {preRegistration && (
             <p className="mb-8 rounded-md border-2 border-primary bg-background px-5 py-4 type-body font-bold">
               {courseAnnouncement.formNotice}
@@ -360,14 +370,9 @@ export default function OnboardingForm({ preRegistration = false }: { preRegistr
                           <SelectTrigger id={field.name} className="w-full bg-white px-4 text-base">
                             <SelectValue placeholder="Оберіть модуль" />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="intro">Вступ</SelectItem>
-                            <SelectItem value="Міжнародне право">Міжнародне право</SelectItem>
-                            <SelectItem value="Війна, торг, правила">Війна, торг, правила</SelectItem>
-                            <SelectItem value="Політичні режими">Політичні режими</SelectItem>
-                            <SelectItem value="Корупція та як політики (не)можуть на неї впливати">
-                              Корупція та як політики (не)можуть на неї впливати
-                            </SelectItem>
+                          {/* No wider than the field: the long option wraps on phones */}
+                          <SelectContent className="max-w-(--radix-select-trigger-width)">
+                            {moduleBlock && <SelectItem value={moduleBlock}>{moduleBlock}</SelectItem>}
                             <SelectItem value="Весь курс">Весь курс</SelectItem>
                           </SelectContent>
                         </Select>

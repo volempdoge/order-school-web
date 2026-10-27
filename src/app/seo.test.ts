@@ -33,6 +33,14 @@ describe("pageMetadata", () => {
     expect(meta.openGraph).toMatchObject({ url: "/page", title: expect.stringContaining("Сторінка") });
     expect(meta.twitter).toMatchObject({ card: "summary_large_image", description: "Опис" });
   });
+
+  it("gives every page the share image, which Next.js would otherwise drop below the home page", () => {
+    const meta = pageMetadata({ title: "Сторінка", description: "Опис", path: "/page" });
+    expect(meta.openGraph?.images).toEqual([
+      expect.objectContaining({ url: "/opengraph-image.jpg", width: 1200 }),
+    ]);
+    expect(meta.twitter?.images).toEqual([expect.objectContaining({ url: "/twitter-image.jpg" })]);
+  });
 });
 
 describe("search snippet", () => {

@@ -36,9 +36,7 @@ export default function Videos({ id }: { id?: string }) {
         className="bg-cover bg-center bg-no-repeat py-12"
         style={{ backgroundImage: `url(${sectionBackground.src})` }}
       >
-        {/* Phones: a swipeable row that peeks the next video. From md: side by side.
-          The row reveals as a whole: cards off to the side never scroll into view, so they would stay
-          shifted down and could be scrolled vertically inside the row. */}
+        {/* Phones: a swipeable row; from md, side by side. Reveals as a whole, like the teachers' row */}
         <div className="relative z-10 mx-auto md:px-16 lg:px-32 xl:px-64">
           <div
             data-reveal="up"

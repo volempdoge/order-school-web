@@ -15,10 +15,14 @@ import {
 } from "@/components/ui/navigation-menu";
 import { navLinks, site } from "@/content/site";
 
+import SectionLink from "./SectionLink";
 import SocialLinks from "./SocialLinks";
 import { Button } from "./ui/button";
 
 const MENU_ID = "mobile-menu";
+// Underlined while its section is on screen, or on its own page
+const DESKTOP_LINK =
+  "inline-block cursor-pointer bg-transparent px-1 py-2 text-xs font-bold whitespace-nowrap uppercase decoration-primary decoration-2 underline-offset-8 hover:text-inherit hover:underline focus:bg-transparent focus:text-inherit aria-[current=location]:underline aria-[current=page]:underline min-[1680px]:px-2 min-[1680px]:text-sm min-[1680px]:tracking-wide";
 
 export function Navigation() {
   const [scrolled, setScrolled] = React.useState(false);
@@ -28,9 +32,6 @@ export function Navigation() {
   const toggleRef = React.useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const isHome = pathname === "/";
-  // Section links always point at the home page: on it they just scroll in place
-  // (scroll-margin in globals.css keeps them below the header)
-  const sectionHref = (hash: string) => `/${hash}`;
 
   React.useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -121,37 +122,46 @@ export function Navigation() {
       {/* Solid by default; transparent over the hero photo until scrolled — see `over-hero` in globals.css */}
       <header
         data-scrolled={scrolled || undefined}
-        className="fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between gap-2 rounded-b-md bg-background px-4 text-foreground shadow-md transition-all duration-300 md:h-24 md:px-8 lg:gap-4 xl:gap-6 xl:px-12 2xl:px-20 over-hero:rounded-none over-hero:bg-transparent over-hero:text-white over-hero:shadow-none md:over-hero:h-36"
+        className="fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between gap-2 rounded-b-md bg-background px-4 text-foreground shadow-md transition-all duration-300 md:h-24 md:px-8 lg:gap-4 xl:gap-6 xl:px-12 2xl:px-16 over-hero:rounded-none over-hero:bg-transparent over-hero:text-white over-hero:shadow-none md:over-hero:h-36"
       >
         <Link href="/" aria-label={`${site.name} — на головну`} className="shrink-0">
           <Image
             src={logo_mobile}
             alt={site.name}
             priority
-            className="h-7 w-auto cursor-pointer md:h-10 2xl:h-12 over-hero:hidden"
+            className="h-7 w-auto cursor-pointer md:h-10 xl:h-8 2xl:h-10 over-hero:hidden"
           />
           <Image
             src={logo}
             alt=""
             aria-hidden
             priority
-            className="hidden h-7 w-auto cursor-pointer md:h-10 2xl:h-12 over-hero:block"
+            className="hidden h-7 w-auto cursor-pointer md:h-10 xl:h-8 2xl:h-10 over-hero:block"
           />
         </Link>
 
         <NavigationMenu className="hidden min-w-0 flex-1 xl:block">
-          <NavigationMenuList className="flex justify-center space-x-1 2xl:space-x-3">
+          <NavigationMenuList className="flex justify-center space-x-1 2xl:space-x-2">
             {navLinks.map((link) => (
               <NavigationMenuItem key={link.href}>
                 <NavigationMenuLink
-                  href={sectionHref(link.href)}
+                  asChild
                   aria-current={isHome && `#${activeSection}` === link.href ? "location" : undefined}
-                  className="inline-block cursor-pointer bg-transparent px-1 py-2 text-xs font-bold whitespace-nowrap uppercase decoration-primary decoration-2 underline-offset-8 hover:text-inherit hover:underline focus:bg-transparent focus:text-inherit aria-[current=location]:underline 2xl:px-2 2xl:text-sm 2xl:tracking-wide"
+                  className={DESKTOP_LINK}
                 >
-                  {link.text}
+                  <SectionLink hash={link.href}>{link.text}</SectionLink>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
+            <NavigationMenuItem>
+              <NavigationMenuLink
+                asChild
+                aria-current={pathname === "/gallery" ? "page" : undefined}
+                className={DESKTOP_LINK}
+              >
+                <Link href="/gallery">Галерея</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
@@ -215,13 +225,13 @@ export function Navigation() {
             <nav className="flex flex-shrink-0 flex-col">
               {navLinks.map((link) => (
                 <React.Fragment key={link.href}>
-                  <Link
-                    href={sectionHref(link.href)}
+                  <SectionLink
+                    hash={link.href}
                     onClick={closeMenu}
                     className="px-6 py-4 text-xl font-bold tracking-wide text-white uppercase transition-colors hover:bg-white/10"
                   >
                     {link.text}
-                  </Link>
+                  </SectionLink>
                   <div className="mx-3 h-px bg-white/30" />
                 </React.Fragment>
               ))}

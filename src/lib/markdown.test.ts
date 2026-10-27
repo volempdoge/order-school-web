@@ -21,7 +21,7 @@ describe("llms.txt", () => {
 
 describe("index.md", () => {
   it("contains every FAQ answer and teacher", () => {
-    const md = homeMarkdown([]);
+    const md = homeMarkdown([], faq);
     for (const item of faq) {
       expect(md).toContain(item.q);
       expect(md).toContain(item.a);
@@ -34,7 +34,6 @@ describe("index.md", () => {
       [
         {
           id: "a",
-          moduleId: 1,
           title: "Вступ",
           description: "Опис",
           startDate: "2026-10-01",
@@ -43,13 +42,13 @@ describe("index.md", () => {
       ],
       new Date("2026-10-05T12:00:00Z"),
     );
-    const md = homeMarkdown(modules);
+    const md = homeMarkdown(modules, faq);
     expect(md).toContain("**Модуль 1: Вступ** (01.10–14.10) — триває");
     expect(md).toContain("Опис");
   });
 
   it("announces upcoming courses when nothing is scheduled or Notion is unavailable", () => {
-    const md = homeMarkdown([]);
+    const md = homeMarkdown([], faq);
     expect(md).toContain("Нові річні курси в розробці");
     expect(md).not.toContain("Інші модулі у розробці");
   });

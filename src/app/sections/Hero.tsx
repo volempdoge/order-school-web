@@ -1,8 +1,10 @@
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import hero from "@/assets/hero.webp";
 import heroMobile from "@/assets/hero-mobile.webp";
 import ArtDirectedImage from "@/components/ArtDirectedImage";
+import SectionLink from "@/components/SectionLink";
 import { Button } from "@/components/ui/button";
 
 // Dark until the photo arrives, so the transparent header never sits on beige
@@ -10,15 +12,28 @@ export default function Hero({ id }: { id?: string }) {
   return (
     <section id={id} data-hero className="relative min-h-screen w-full overflow-hidden bg-foreground">
       <div className="absolute inset-0 z-0 md:border-b-4 md:border-primary">
-        <ArtDirectedImage
-          mobile={heroMobile}
-          desktop={hero}
-          alt="Випускники Гуртка політичних студій із сертифікатами KSE у головному кампусі Київської школи економіки"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
+        {/* Phones: capped at 1.7× the width so tall screens don't crop people at the sides, and slid down
+            to sit above the heading (docs/architecture.md) */}
+        <div className="absolute inset-x-0 top-[max(0px,calc(100%-170vw-10rem))] h-full max-h-[170vw] md:top-0 md:max-h-none">
+          <ArtDirectedImage
+            mobile={heroMobile}
+            desktop={hero}
+            alt="Випускники Гуртка політичних студій із сертифікатами KSE у головному кампусі Київської школи економіки"
+            fill
+            priority
+            sizes="100vw"
+            // The man at the right edge stands closer to it than anyone on the left
+            className="object-cover object-[60%_50%] md:object-center"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-x-0 top-0 h-24 bg-linear-to-b from-foreground to-transparent md:hidden"
+          />
+          <div
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-foreground to-transparent md:hidden"
+          />
+        </div>
         {/* Scrim: keeps the white menu and heading readable over the light photo */}
         <div
           aria-hidden
@@ -41,6 +56,15 @@ export default function Hero({ id }: { id?: string }) {
           </Button>
         </div>
       </div>
+
+      {/* Phones: the hero fills the screen, so hint that the page goes on */}
+      <SectionLink
+        hash="#about"
+        aria-label="Гортайте далі"
+        className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 p-2 text-white/80 md:hidden"
+      >
+        <ChevronDown aria-hidden className="size-7 motion-safe:animate-bounce" />
+      </SectionLink>
     </section>
   );
 }

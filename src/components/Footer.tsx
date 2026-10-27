@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import logo from "@/assets/logo.svg";
+import SectionLink from "@/components/SectionLink";
 import { Button } from "@/components/ui/button";
 import { navLinks, site } from "@/content/site";
 
@@ -23,9 +24,9 @@ export default function Footer() {
           <ul className="space-y-2 type-small text-white/80">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <Link href={`/${link.href}`} className="underline-offset-4 hover:text-white hover:underline">
+                <SectionLink hash={link.href} className="underline-offset-4 hover:text-white hover:underline">
                   {link.text}
-                </Link>
+                </SectionLink>
               </li>
             ))}
             <li>

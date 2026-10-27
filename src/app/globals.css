@@ -8,27 +8,8 @@
    ([data-hero]) and isn't scrolled. Pure CSS, so the server HTML can never disagree with the client. */
 @custom-variant over-hero (html:has([data-hero]) &:where(header:not([data-scrolled]), header:not([data-scrolled]) *));
 
-/*
-  Design tokens. Everything on the site must use these — no raw hex values in components.
-
-  Fonts (2):
-    display — Cy Grotesk Wide: headings, numbers, big accents, quotes and module titles. Single face;
-              uppercase except in quotes and module titles.
-    body    — Gotham Pro: running text, UI, buttons, forms.
-
-  Colors (5 + white):
-    primary         #F42B39  the one accent red: fills, borders, icons, highlighted and linked text,
-                             labels, errors, focus rings. Contrast: white on it 4.0:1, on beige 3.1:1 —
-                             below WCAG AA for small text, a deliberate brand decision.
-    primary-strong  #C70A17  hover/pressed state of red buttons only, never a resting color.
-    background      #E6E1D0  brand beige, the page and section surface.
-    foreground      #191A21  ink: all text on light backgrounds, dark surfaces.
-    muted-foreground         ink at 70% — secondary text (5.6:1 on beige).
-
-  Radii (3): sm 6px — badges; md 12px — buttons, inputs; lg 24px — cards, panels, media.
-*/
-
-/* Not inline: emitted as real CSS variables so the type-* utilities below can use them */
+/* Design tokens (README, «Дизайн-система»): components use only these, never raw hex values.
+   Not inline: emitted as real CSS variables so the type-* utilities below can use them. */
 @theme {
   --font-display: var(--font-grotesk), "Arial Black", sans-serif;
   --font-body: var(--font-gotham-pro), system-ui, sans-serif;

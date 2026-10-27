@@ -179,7 +179,10 @@ export default function OnboardingForm({
   return (
     <>
       <section className="flex min-h-screen items-center justify-center p-4 pb-16">
-        <div className="mt-24 w-full max-w-2xl rounded-lg bg-card p-6 shadow-xl md:mt-32 md:p-12">
+        <div
+          data-reveal="up"
+          className="mt-24 w-full max-w-2xl rounded-lg bg-card p-6 shadow-xl md:mt-32 md:p-12"
+        >
           {preRegistration && (
             <p className="mb-8 rounded-md border-2 border-primary bg-background px-5 py-4 type-body font-bold">
               {courseAnnouncement.formNotice}
@@ -367,7 +370,7 @@ export default function OnboardingForm({
                           <SelectTrigger id={field.name} className="w-full bg-white px-4 text-base">
                             <SelectValue placeholder="Оберіть модуль" />
                           </SelectTrigger>
-                          {/* Capped at the trigger width so the long option wraps instead of running off a phone screen */}
+                          {/* No wider than the field: the long option wraps on phones */}
                           <SelectContent className="max-w-(--radix-select-trigger-width)">
                             {moduleBlock && <SelectItem value={moduleBlock}>{moduleBlock}</SelectItem>}
                             <SelectItem value="Весь курс">Весь курс</SelectItem>

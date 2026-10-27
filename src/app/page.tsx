@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 // Modules come from Notion: the page is static HTML, regenerated at most once a minute
 export const revalidate = 60;
 
-// The share image (app/opengraph-image.jpg): also the picture Google should show next to the result
+// The share image (app/opengraph-image.jpg), also offered to Google as the result's thumbnail
 const PAGE_IMAGE = {
   "@type": "ImageObject",
   url: `${SITE_URL}/opengraph-image.jpg`,

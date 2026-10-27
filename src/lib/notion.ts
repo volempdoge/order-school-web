@@ -83,11 +83,10 @@ export async function getModules(): Promise<Module[]> {
         title: getText(properties["Title"]),
         startDate: getDateStart(properties["Start Date"]),
         endDate: getDateStart(properties["End Date"]),
-        // Handle "Description " with trailing space as seen in Notion API response
+        // The column is named with a trailing space in Notion
         description: getText(properties["Description"] ?? properties["Description "]),
         status: getText(properties["Status"]),
       }))
-      // Filter out modules that are explicitly marked as "Draft"
       .filter((module) => module.status !== "Draft")
       .map(({ status: _status, ...module }) => module);
 

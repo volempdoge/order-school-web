@@ -20,9 +20,9 @@ interface ModuleRaw {
   id: string;
   moduleId?: number | null;
   title: string;
-  dateRange?: string; // Format: "DD.MM-DD.MM" (optional for backward compatibility)
-  startDate?: string; // ISO format or parseable date string
-  endDate?: string; // ISO format or parseable date string
+  dateRange?: string; // "DD.MM-DD.MM", from the old table format
+  startDate?: string; // ISO date or timestamp
+  endDate?: string;
   description: string;
 }
 
@@ -172,7 +172,7 @@ export function buildTimeline(rawModules: ModuleRaw[], now: Date = new Date()): 
 
   const nowTime = now.getTime();
 
-  // CASE A - active module; CASE B - if none is active, the nearest future one
+  // The running module or, if none, the nearest upcoming one
   const activeIndex = sorted.findIndex(
     (m) => m.startDate && m.endDate && nowTime >= m.startDate.getTime() && nowTime <= m.endDate.getTime(),
   );
@@ -202,10 +202,8 @@ export function hasOpenModules(modules: TimelineModule[]): boolean {
   return modules.some((module) => module.status !== null);
 }
 
-/**
- * The form's option for the modules that have not ended yet, offered as one block: enrolment is for at
- * least three modules. null when there is nothing to enrol in, so only "Весь курс" is left.
- */
+// The form's option for the modules that have not ended, as one block: enrolment is for at least three.
+// null when nothing is left to enrol in.
 export function enrolmentBlock(modules: TimelineModule[], now: Date = new Date()): string | null {
   const open = modules.filter((m) => !m.endDate || m.endDate.getTime() >= now.getTime());
   const first = open[0];

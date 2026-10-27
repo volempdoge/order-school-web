@@ -20,7 +20,7 @@ import SocialLinks from "./SocialLinks";
 import { Button } from "./ui/button";
 
 const MENU_ID = "mobile-menu";
-// Desktop menu link; underlined while its section is on screen, or on the gallery page itself
+// Underlined while its section is on screen, or on its own page
 const DESKTOP_LINK =
   "inline-block cursor-pointer bg-transparent px-1 py-2 text-xs font-bold whitespace-nowrap uppercase decoration-primary decoration-2 underline-offset-8 hover:text-inherit hover:underline focus:bg-transparent focus:text-inherit aria-[current=location]:underline aria-[current=page]:underline min-[1680px]:px-2 min-[1680px]:text-sm min-[1680px]:tracking-wide";
 

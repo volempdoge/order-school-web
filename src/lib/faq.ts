@@ -4,8 +4,7 @@ import { reportError } from "@/lib/report-error";
 
 export type { FaqItem };
 
-// Never throws: without NOTION_FAQ_DATABASE_ID, or when Notion fails or the table is empty, the questions
-// in site.ts are shown, so the section and its JSON-LD are never empty
+// Never throws: falls back to the questions in site.ts when the table is not set, empty or unreachable
 export async function getFaq(): Promise<readonly FaqItem[]> {
   const databaseId = process.env.NOTION_FAQ_DATABASE_ID;
   if (!databaseId || !process.env.NOTION_API_KEY) return fallbackFaq;

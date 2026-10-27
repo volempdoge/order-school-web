@@ -12,9 +12,8 @@ export default function Hero({ id }: { id?: string }) {
   return (
     <section id={id} data-hero className="relative min-h-screen w-full overflow-hidden bg-foreground">
       <div className="absolute inset-0 z-0 md:border-b-4 md:border-primary">
-        {/* Phones: at most a little taller than the 2:3 photo itself (a ~6% trim at each side keeps
-            everyone in), so tall screens don't crop the people at the sides. On tall screens the photo
-            slides down to sit right above the heading; the dark background fills the rest. */}
+        {/* Phones: capped at 1.7× the width so tall screens don't crop people at the sides, and slid down
+            to sit above the heading (docs/architecture.md) */}
         <div className="absolute inset-x-0 top-[max(0px,calc(100%-170vw-10rem))] h-full max-h-[170vw] md:top-0 md:max-h-none">
           <ArtDirectedImage
             mobile={heroMobile}
@@ -23,7 +22,7 @@ export default function Hero({ id }: { id?: string }) {
             fill
             priority
             sizes="100vw"
-            // Trim a bit more on the left: the man at the right edge stands closer to it
+            // The man at the right edge stands closer to it than anyone on the left
             className="object-cover object-[60%_50%] md:object-center"
           />
           <div

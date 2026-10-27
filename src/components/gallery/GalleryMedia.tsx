@@ -28,7 +28,7 @@ function YouTubeVideo({ video, label }: { video: GalleryVideo; label: string }) 
             className="group absolute inset-0 flex cursor-pointer items-center justify-center outline-none focus-visible:ring-[3px] focus-visible:ring-ring/60 focus-visible:ring-inset"
           >
             <Image
-              src={`https://i.ytimg.com/vi/${video.youtubeId}/hqdefault.jpg`}
+              src={video.thumbnail}
               alt=""
               fill
               sizes="(min-width: 768px) 50vw, 100vw"
@@ -62,6 +62,16 @@ function Lightbox({
   eventTitle: string;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  // Plays the closing animation; the dialog closes when it ends
+  const [closing, setClosing] = useState(false);
+  const requestClose = () => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) ref.current?.close();
+    else setClosing(true);
+  };
+  const requestCloseRef = useRef(requestClose);
+  useEffect(() => {
+    requestCloseRef.current = requestClose;
+  });
   const image = images[index];
   const many = images.length > 1;
   // From the latest index, so quick repeated presses never skip or stall
@@ -81,6 +91,11 @@ function Lightbox({
     root.style.overflow = "hidden";
 
     let touchX: number | null = null;
+    // Escape: animate out first
+    const onCancel = (event: Event) => {
+      event.preventDefault();
+      requestCloseRef.current();
+    };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft") goRef.current(-1);
       if (event.key === "ArrowRight") goRef.current(1);
@@ -94,10 +109,12 @@ function Lightbox({
         goRef.current(end < touchX ? 1 : -1);
       touchX = null;
     };
+    dialog.addEventListener("cancel", onCancel);
     dialog.addEventListener("keydown", onKeyDown);
     dialog.addEventListener("touchstart", onTouchStart, { passive: true });
     dialog.addEventListener("touchend", onTouchEnd);
     return () => {
+      dialog.removeEventListener("cancel", onCancel);
       dialog.removeEventListener("keydown", onKeyDown);
       dialog.removeEventListener("touchstart", onTouchStart);
       dialog.removeEventListener("touchend", onTouchEnd);
@@ -112,7 +129,14 @@ function Lightbox({
       ref={ref}
       aria-label={`Фото: ${eventTitle}`}
       onClose={onClose}
-      className="m-0 h-dvh max-h-none w-screen max-w-none bg-foreground/95 p-0 text-white backdrop:bg-foreground/80"
+      onAnimationEnd={(event) => {
+        if (closing && event.target === event.currentTarget) ref.current?.close();
+      }}
+      className={`m-0 h-dvh max-h-none w-screen max-w-none bg-foreground/95 p-0 text-white backdrop:bg-foreground/80 ${
+        closing
+          ? "animate-out duration-150 fade-out-0 fill-mode-forwards"
+          : "motion-safe:animate-in motion-safe:duration-200 motion-safe:fade-in-0"
+      }`}
     >
       <div className="flex h-full flex-col items-center justify-center gap-4 px-4 py-16">
         <div className="relative flex min-h-0 w-full flex-1 items-center justify-center">
@@ -124,7 +148,11 @@ function Lightbox({
             height={image.height}
             sizes="100vw"
             unoptimized={image.external}
-            className="h-auto max-h-full w-auto max-w-full object-contain"
+            className={`h-auto max-h-full w-auto max-w-full object-contain ${
+              closing
+                ? "animate-out duration-150 fade-out-0 fill-mode-forwards zoom-out-95"
+                : "motion-safe:animate-in motion-safe:duration-300 motion-safe:fade-in-0 motion-safe:zoom-in-95"
+            }`}
           />
         </div>
         <p className="min-h-6 max-w-3xl text-center type-body">
@@ -139,7 +167,7 @@ function Lightbox({
 
       <button
         type="button"
-        onClick={() => ref.current?.close()}
+        onClick={requestClose}
         aria-label="Закрити"
         className="absolute top-4 right-4 flex size-11 cursor-pointer items-center justify-center rounded-full bg-white/10 outline-none hover:bg-white/20 focus-visible:ring-[3px] focus-visible:ring-white/70"
       >

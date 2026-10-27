@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { get as httpsGet } from "node:https";
+import { get as httpsGet, request as httpsRequest } from "node:https";
 
 import { del, list, put } from "@vercel/blob";
 import { imageSize } from "image-size";
@@ -7,24 +7,8 @@ import sharp from "sharp";
 
 import { reportError } from "@/lib/report-error";
 
-/*
-  The gallery is the Notion database «Спогади» (NOTION_GALLERY_DATABASE_ID). A row without
-  «Parent item» is an event:
-    • «Entry»                  — the event name
-    • «Date»                   — date; the timeline is sorted by it, newest first; undated events go last
-    • «Additional description» — text, optional
-    • «Media file», «URL (video)» — the event's own photos and YouTube video, optional
-    • «Published»              — optional checkbox: once the column exists, only checked events are shown
-  Its «Sub-item» rows are its media, in the order they're listed there: their «Media file» photos and
-  «URL (video)» YouTube link, captioned with their «Additional description» (or «Entry» if it's empty).
-  The event's page body is read too: images and YouTube videos (video, embed or bookmark block) with
-  their captions, and paragraphs, which become the event's text under the description.
-
-  Notion's file links expire after an hour, so every image is copied to Vercel Blob
-  (BLOB_READ_WRITE_TOKEN) once, named after the source file — later syncs reuse the copy.
-  The copy is shrunk first (see MAX_SIDE), and the gallery syncs at most once an hour: each sync lists
-  the Blob store, and the free Hobby plan allows 1 GB of storage and 2,000 such operations a month.
-*/
+// The gallery from the Notion table «Спогади»: structure in README («Галерея»), Blob copies and
+// limits in docs/architecture.md
 
 const NOTION_VERSION = "2022-06-28";
 // Keep in sync with `revalidate` in app/gallery/page.tsx
@@ -55,6 +39,8 @@ export interface GalleryVideo {
   kind: "video";
   id: string;
   youtubeId: string;
+  /** The largest thumbnail YouTube has for it */
+  thumbnail: string;
   caption: string;
 }
 
@@ -75,8 +61,6 @@ export interface Gallery {
   /** Not configured or Notion unreachable */
   unavailable: boolean;
 }
-
-// --- Notion ---------------------------------------------------------------------------------
 
 type RichText = { plain_text: string }[];
 type FileObject = { type: "file"; file: { url: string } } | { type: "external"; external: { url: string } };
@@ -182,8 +166,6 @@ function isPublished(page: NotionPage): boolean {
   return published?.type === "checkbox" && "checkbox" in published ? published.checkbox : true;
 }
 
-// --- YouTube --------------------------------------------------------------------------------
-
 /** The video id of a YouTube link (watch, youtu.be, shorts, embed, live), or null */
 export function youtubeId(url: string): string | null {
   let parsed: URL;
@@ -201,8 +183,6 @@ export function youtubeId(url: string): string | null {
         : undefined;
   return id && /^[\w-]{11}$/.test(id) ? id : null;
 }
-
-// --- Images: copy to Vercel Blob --------------------------------------------------------------
 
 interface StoredImage {
   src: string;
@@ -234,6 +214,32 @@ function download(url: string, redirects = 3): Promise<Buffer> {
   });
 }
 
+function exists(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    httpsRequest(url, { method: "HEAD", timeout: 5000 }, (response) => {
+      response.resume();
+      resolve(response.statusCode === 200);
+    })
+      .on("timeout", function (this: { destroy(): void }) {
+        this.destroy();
+      })
+      .on("error", () => resolve(false))
+      .end();
+  });
+}
+
+// Largest first: 1280×720 and 640×480 exist only for some videos (404 otherwise), 480×360 for all
+const YOUTUBE_THUMBNAILS = ["maxresdefault", "sddefault", "hqdefault"] as const;
+
+export async function youtubeThumbnail(
+  id: string,
+  check: (url: string) => Promise<boolean> = exists,
+): Promise<string> {
+  const urls = YOUTUBE_THUMBNAILS.map((name) => `https://i.ytimg.com/vi/${id}/${name}.jpg`);
+  for (const url of urls.slice(0, -1)) if (await check(url)) return url;
+  return urls.at(-1)!;
+}
+
 // Pathname: gallery/<hash of the source file>-<width>x<height>.<ext>
 const STORED_NAME = /^gallery\/([0-9a-f]{20})-(\d+)x(\d+)\.\w+$/;
 
@@ -250,11 +256,9 @@ async function storedImages(): Promise<Map<string, StoredImage>> {
   return stored;
 }
 
-// Long side of the copy kept in Blob. The site never shows a photo wider than 1920px, and a 10 MB camera
-// original would fill the free 1 GB in about a hundred photos; the copy is ~0.5 MB.
+// Long side of the copy kept in Blob; the site never shows a photo wider than 1920px
 const MAX_SIDE = 2560;
-// Part of every copy's name: change it when copies are made differently, and the next sync replaces
-// them all (the old ones are then deleted as unused)
+// Part of every copy's name: change it and the next sync replaces all copies
 const COPY_VERSION = `${MAX_SIDE}-webp`;
 
 // The same file keeps the same hash: Notion's links change every hour, but not their path
@@ -265,7 +269,7 @@ function sourceHash(url: string, isNotionFile: boolean): string {
 
 export async function shrink(body: Buffer): Promise<{ body: Buffer; width: number; height: number }> {
   const { data, info } = await sharp(body)
-    .rotate() // applies the EXIF orientation, so width and height are as the photo is shown
+    .rotate() // EXIF orientation, so width and height match the photo as shown
     .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: "inside", withoutEnlargement: true })
     .webp({ quality: 82 })
     .toBuffer({ resolveWithObject: true });
@@ -297,11 +301,9 @@ async function copyImage(url: string, hash: string, useBlob: boolean): Promise<S
   return { src: blob.url, width: copy.width, height: copy.height };
 }
 
-// --- Assembly --------------------------------------------------------------------------------
-
 const VIDEO_FILE = /\.(mp4|mov|m4v|webm|avi|mkv)$/i;
 
-function videoFrom(url: string, id: string, caption: string): GalleryVideo | null {
+async function videoFrom(url: string, id: string, caption: string): Promise<GalleryVideo | null> {
   const youtube = youtubeId(url);
   if (!youtube) {
     reportError(new Error(`Gallery: only YouTube videos are supported, got ${url}`), {
@@ -310,10 +312,9 @@ function videoFrom(url: string, id: string, caption: string): GalleryVideo | nul
     });
     return null;
   }
-  return { kind: "video", id, youtubeId: youtube, caption };
+  return { kind: "video", id, youtubeId: youtube, thumbnail: await youtubeThumbnail(youtube), caption };
 }
 
-// A row's «Media file» photos and «URL (video)», all with the same caption
 async function propertyMedia(page: NotionPage, caption: string, images: ImageSync): Promise<GalleryMedia[]> {
   const photos = await Promise.all(
     filesOf(page).map(async (file, index): Promise<GalleryMedia | null> => {
@@ -329,11 +330,10 @@ async function propertyMedia(page: NotionPage, caption: string, images: ImageSyn
     }),
   );
   const url = urlOf(page);
-  const video = url ? videoFrom(url, `${page.id}-video`, caption) : null;
+  const video = url ? await videoFrom(url, `${page.id}-video`, caption) : null;
   return [...photos, video].filter((item) => item !== null);
 }
 
-// Images, videos and paragraphs from the event's page body
 async function bodyContent(
   page: NotionPage,
   images: ImageSync,
@@ -364,7 +364,7 @@ async function bodyContent(
             : block.type === "bookmark" && "bookmark" in block
               ? block.bookmark
               : null;
-      return link && videoFrom(link.url, block.id, plain(link.caption));
+      return link && (await videoFrom(link.url, block.id, plain(link.caption)));
     }),
   );
 
@@ -391,10 +391,8 @@ async function loadEvent(page: NotionPage, children: NotionPage[], images: Image
   };
 }
 
-/**
- * Splits the rows into events (no «Parent item») and their sub-items, in the order the event's
- * «Sub-item» lists them. Notion lists only the first 25 there, so any others follow in creation order.
- */
+// Sub-items keep the event's «Sub-item» order; Notion lists only the first 25 there, the rest follow
+// in creation order
 export function groupEvents(pages: NotionPage[]): { event: NotionPage; children: NotionPage[] }[] {
   const childrenOf = new Map<string, NotionPage[]>();
   const events: NotionPage[] = [];

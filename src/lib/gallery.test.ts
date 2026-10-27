@@ -1,7 +1,7 @@
 import sharp from "sharp";
 import { describe, expect, it } from "vitest";
 
-import { groupEvents, shrink, youtubeId } from "./gallery";
+import { groupEvents, shrink, youtubeId, youtubeThumbnail } from "./gallery";
 
 describe("youtubeId", () => {
   it.each([
@@ -78,5 +78,23 @@ describe("shrink", () => {
   it("applies the EXIF rotation, so a portrait shot taken sideways stays portrait", async () => {
     const copy = await shrink(await photo(600, 400).withMetadata({ orientation: 6 }).toBuffer());
     expect([copy.width, copy.height]).toEqual([400, 600]);
+  });
+});
+
+describe("youtubeThumbnail", () => {
+  const available =
+    (...names: string[]) =>
+    async (url: string) =>
+      names.some((name) => url.endsWith(`/${name}.jpg`));
+
+  it("takes the 1280×720 thumbnail when the video has one", async () => {
+    expect(await youtubeThumbnail("dhy2WOy60kw", available("maxresdefault", "sddefault"))).toBe(
+      "https://i.ytimg.com/vi/dhy2WOy60kw/maxresdefault.jpg",
+    );
+  });
+
+  it("falls back to 640×480, then to 480×360, which every video has", async () => {
+    expect(await youtubeThumbnail("x", available("sddefault"))).toMatch(/\/sddefault\.jpg$/);
+    expect(await youtubeThumbnail("x", available())).toMatch(/\/hqdefault\.jpg$/);
   });
 });

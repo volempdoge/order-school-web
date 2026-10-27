@@ -9,9 +9,8 @@ const SHARE_IMAGE = {
   alt: "Гурток політичних студій KSE — офлайн-курс політології для учнів 8–11 класів у Києві",
 };
 
-// Child pages must repeat openGraph/twitter: Next.js replaces these objects
-// instead of merging them with the ones from the layout. That includes the images: without them
-// a shared link to any page but the home page had no picture, and Telegram showed no preview at all.
+// Next.js replaces openGraph/twitter from the layout instead of merging them, so every page repeats
+// them, images included
 export function pageMetadata({
   title,
   description,

@@ -31,7 +31,7 @@
     "@radix-ui/react-select": "^2.3.7",
     "@radix-ui/react-separator": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",
-    "@sentry/nextjs": "^11.1.0",
+    "@sentry/nextjs": "^11.10.0",
     "@tanstack/react-form": "^1.23.7",
     "@vercel/blob": "^2.8.0",
     "class-variance-authority": "^0.7.1",
